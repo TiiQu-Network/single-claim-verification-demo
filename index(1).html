@@ -1,1051 +1,193 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>V.a.a.S – Sustainability Claim Verification Demo</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800&display=swap" rel="stylesheet">
-
-  <style>
-    :root{
-      --accent:#034459;
-      --accent-soft:#eef6f8;
-      --accent-line:rgba(3,68,89,.16);
-      --accent-shadow:rgba(3,68,89,.14);
-      --ink:#10212b;
-      --muted:#667886;
-      --light:#f7fbfc;
-      --line:#dde7ee;
-      --card:#ffffff;
-      --shadow:0 24px 70px rgba(15,41,57,.10);
-      --shadow-soft:0 14px 38px rgba(15,41,57,.07);
-      --radius:28px;
-
-      --trusted:#16a34a;
-      --emerging:#f59e0b;
-      --contested:#ef4444;
-      --nonver:#334155;
-    }
-
-    *{box-sizing:border-box}
-
-    html{scroll-behavior:smooth;}
-
-    body{
-      margin:0;
-      font-family:Raleway, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      color:var(--ink);
-      background:
-        radial-gradient(760px 380px at 50% -160px, rgba(3,68,89,.07), transparent 70%),
-        linear-gradient(180deg,#ffffff 0%,#fbfdfe 60%,#f5f9fb 100%);
-      min-height:100vh;
-    }
-
-    a{color:inherit;}
-
-    .page{
-      width:min(1240px, calc(100% - 48px));
-      margin:0 auto;
-      padding:44px 0 96px;
-    }
-
-    .topbar{
-      display:flex;
-      justify-content:flex-end;
-      align-items:center;
-      min-height:56px;
-      margin-bottom:34px;
-    }
-
-    .top-cta,
-    .secondary-button,
-    .primary-button,
-    .chip-button{
-      font-family:Raleway, Arial, sans-serif;
-      font-weight:800;
-      border-radius:16px;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      cursor:pointer;
-      transition:transform .16s ease, box-shadow .16s ease, background .16s ease, border-color .16s ease;
-      user-select:none;
-    }
-
-    .top-cta{
-      color:var(--accent);
-      border:1px solid var(--accent-line);
-      background:#fff;
-      padding:15px 22px;
-      box-shadow:0 10px 28px rgba(15,41,57,.05);
-      font-size:15px;
-    }
-
-    .top-cta:hover,
-    .secondary-button:hover,
-    .chip-button:hover{
-      transform:translateY(-1px);
-      border-color:rgba(3,68,89,.28);
-      box-shadow:0 14px 34px rgba(15,41,57,.08);
-    }
-
-    .hero{
-      min-height:640px;
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      text-align:center;
-      padding:26px 0 52px;
-    }
-
-    .brand{
-      font-size:clamp(72px, 9vw, 136px);
-      line-height:.9;
-      letter-spacing:.055em;
-      font-weight:800;
-      color:#07141d;
-      margin:0;
-    }
-
-    .slug{
-      margin:34px auto 0;
-      color:#4a5f6d;
-      font-family:Nunito, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      font-weight:700;
-      font-size:clamp(20px, 2vw, 29px);
-      line-height:1.45;
-    }
-
-    .question{
-      margin:92px 0 36px;
-      color:#07141d;
-      font-weight:700;
-      font-size:clamp(40px, 5vw, 70px);
-      letter-spacing:-.035em;
-      line-height:1.08;
-    }
-
-    .search-shell{
-      width:min(100%, 1060px);
-      background:#fff;
-      border:1px solid rgba(3,68,89,.14);
-      border-radius:28px;
-      box-shadow:var(--shadow);
-      min-height:104px;
-      display:grid;
-      grid-template-columns:72px 1fr 260px;
-      align-items:center;
-      gap:0;
-      padding:12px;
-    }
-
-    .search-icon{
-      width:100%;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      color:#6b7c88;
-    }
-
-    .claim-input{
-      width:100%;
-      border:0;
-      outline:0;
-      min-height:72px;
-      padding:0 24px 0 0;
-      font-family:Nunito, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      font-weight:700;
-      color:#203645;
-      font-size:21px;
-      background:transparent;
-      resize:none;
-      line-height:1.45;
-      display:flex;
-      align-items:center;
-    }
-
-    .claim-input::placeholder{color:#9aa7b1;}
-
-    .primary-button{
-      border:0;
-      min-height:76px;
-      padding:0 28px;
-      background:var(--accent);
-      color:#fff;
-      font-size:19px;
-      box-shadow:0 18px 38px rgba(3,68,89,.20);
-    }
-
-    .primary-button:hover{
-      transform:translateY(-1px);
-      box-shadow:0 22px 44px rgba(3,68,89,.26);
-      background:#02394b;
-    }
-
-    .button-row{
-      display:flex;
-      flex-wrap:wrap;
-      justify-content:center;
-      align-items:center;
-      gap:28px;
-      margin-top:72px;
-    }
-
-    .secondary-button{
-      border:1px solid var(--accent-line);
-      color:var(--accent);
-      background:#fff;
-      min-height:68px;
-      padding:0 34px;
-      font-size:17px;
-      box-shadow:0 10px 26px rgba(15,41,57,.05);
-    }
-
-    .conversion-copy{
-      margin:58px auto 0;
-      color:#516575;
-      font-family:Nunito, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      font-size:20px;
-      font-weight:700;
-      line-height:1.6;
-      max-width:960px;
-    }
-
-    .trust-line{
-      margin-top:20px;
-      color:#8996a0;
-      font-family:Nunito, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      font-size:17px;
-      font-weight:700;
-    }
-
-    .panel{
-      width:min(100%, 1060px);
-      margin:38px auto 0;
-      text-align:left;
-      background:#fff;
-      border:1px solid rgba(3,68,89,.12);
-      border-radius:28px;
-      box-shadow:var(--shadow-soft);
-      padding:34px;
-      display:none;
-    }
-
-    .panel.is-visible{display:block;}
-
-    .panel h2{
-      margin:0 0 14px;
-      color:var(--accent);
-      font-size:24px;
-      font-weight:800;
-    }
-
-    .panel p{
-      margin:0;
-      color:#415564;
-      font-family:Nunito, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      font-size:16px;
-      font-weight:700;
-      line-height:1.85;
-    }
-
-    .examples{
-      width:min(100%,1060px);
-      margin:40px auto 0;
-      display:flex;
-      gap:14px;
-      justify-content:center;
-      flex-wrap:wrap;
-    }
-
-    .chip-button{
-      border:1px solid rgba(3,68,89,.12);
-      background:#fff;
-      color:var(--accent);
-      padding:12px 16px;
-      font-size:13px;
-      min-height:46px;
-      box-shadow:0 8px 18px rgba(15,41,57,.04);
-    }
-
-    .loader{
-      width:min(100%, 1060px);
-      margin:38px auto 0;
-      border:1px solid rgba(3,68,89,.10);
-      background:#fff;
-      border-radius:24px;
-      box-shadow:var(--shadow-soft);
-      padding:26px 28px;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      gap:16px;
-      color:var(--accent);
-      font-family:Nunito, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      font-weight:800;
-    }
-
-    .spinner{
-      width:24px;
-      height:24px;
-      border-radius:50%;
-      border:3px solid #dce6ed;
-      border-top-color:var(--accent);
-      animation:spin 1s linear infinite;
-    }
-
-    @keyframes spin{to{transform:rotate(360deg)}}
-
-    .results{
-      width:min(100%, 1120px);
-      margin:54px auto 0;
-      display:none;
-      grid-template-columns:330px 1fr;
-      gap:28px;
-      align-items:start;
-      text-align:left;
-    }
-
-    .verdict-card,
-    .metrics-card,
-    .proofs-card{
-      background:#fff;
-      border:1px solid rgba(3,68,89,.12);
-      border-radius:28px;
-      box-shadow:var(--shadow-soft);
-      padding:34px;
-    }
-
-    .status-icon{
-      width:104px;
-      height:104px;
-      border-radius:28px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:#fff;
-      background:var(--nonver);
-      box-shadow:0 18px 40px rgba(15,41,57,.12);
-      margin-bottom:28px;
-    }
-
-    .label{
-      font-size:12px;
-      color:#718393;
-      font-weight:800;
-      letter-spacing:.1em;
-      text-transform:uppercase;
-    }
-
-    .verdict{
-      margin-top:12px;
-      font-size:27px;
-      font-weight:800;
-      color:#07141d;
-      letter-spacing:.04em;
-      text-transform:uppercase;
-      line-height:1.15;
-    }
-
-    .hint{
-      margin-top:18px;
-      color:#718393;
-      font-family:Nunito, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      font-weight:700;
-      font-size:15px;
-      line-height:1.65;
-    }
-
-    .subtopic{
-      display:inline-flex;
-      align-items:center;
-      padding:10px 14px;
-      border-radius:999px;
-      border:1px solid rgba(3,68,89,.12);
-      background:var(--accent-soft);
-      color:var(--accent);
-      font-size:12px;
-      font-weight:800;
-      letter-spacing:.06em;
-      text-transform:uppercase;
-      margin-bottom:24px;
-    }
-
-    .analysis{
-      color:#415564;
-      font-family:Nunito, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      font-size:17px;
-      font-weight:700;
-      line-height:1.8;
-      margin:0 0 28px;
-    }
-
-    .metric-grid{
-      display:grid;
-      grid-template-columns:1.1fr .9fr .9fr;
-      gap:18px;
-      margin-top:18px;
-    }
-
-    .metric{
-      border:1px solid #e2e9ee;
-      background:#f8fbfc;
-      border-radius:22px;
-      padding:24px;
-      min-height:142px;
-    }
-
-    .metric-value{
-      margin-top:14px;
-      color:#07141d;
-      font-family:Nunito, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      font-size:34px;
-      font-weight:800;
-      line-height:1;
-    }
-
-    .metric-help{
-      margin-top:13px;
-      color:#718393;
-      font-family:Nunito, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      font-size:13px;
-      line-height:1.45;
-      font-weight:700;
-    }
-
-    .bar{
-      width:100%;
-      height:14px;
-      border-radius:999px;
-      background:#e6eef3;
-      overflow:hidden;
-      margin-top:16px;
-      border:1px solid #d4e0e7;
-    }
-
-    .bar-fill{
-      height:100%;
-      width:0%;
-      border-radius:999px;
-      background:var(--accent);
-      transition:width .35s ease;
-    }
-
-    .proofs-card{
-      grid-column:1 / -1;
-      background:#0f1f2c;
-      color:#e5e7eb;
-      border-color:#1d3442;
-      box-shadow:0 22px 54px rgba(15,31,44,.18);
-    }
-
-    .proofs-card h2{
-      margin:0 0 8px;
-      color:#fff;
-      font-size:22px;
-    }
-
-    .proof-intro{
-      margin:0 0 20px;
-      color:#cbd5df;
-      font-family:Nunito, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      font-size:15px;
-      line-height:1.65;
-      font-weight:700;
-    }
-
-    .unit{
-      background:#122737;
-      border:1px solid #254151;
-      border-radius:22px;
-      padding:22px;
-      margin-top:16px;
-      font-family:Nunito, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-    }
-
-    .unit-title{
-      font-weight:800;
-      color:#fff;
-      line-height:1.45;
-    }
-
-    .unit-meta,
-    .snippet{
-      margin-top:10px;
-      font-size:14px;
-      line-height:1.6;
-      color:#d3dce6;
-      font-weight:700;
-    }
-
-    .unit a{color:#a7d8ff;text-decoration:none;}
-    .unit a:hover{text-decoration:underline;}
-
-    .vitality{
-      display:inline-flex;
-      margin-top:14px;
-      border:1px solid rgba(255,255,255,.20);
-      border-radius:999px;
-      padding:7px 11px;
-      color:#e5e7eb;
-      font-size:12px;
-      font-weight:800;
-    }
-
-    .footer-note{
-      width:min(100%, 1060px);
-      margin:66px auto 0;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:26px;
-      border:1px solid rgba(3,68,89,.12);
-      background:#fff;
-      border-radius:28px;
-      padding:32px;
-      box-shadow:var(--shadow-soft);
-      text-align:left;
-    }
-
-    .footer-note strong{
-      color:var(--accent);
-      font-size:19px;
-    }
-
-    .footer-note span{
-      display:block;
-      margin-top:8px;
-      color:#586b7a;
-      font-family:Nunito, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      font-weight:700;
-      line-height:1.65;
-    }
-
-    .about-tiiqu{
-      width:min(100%, 1060px);
-      margin:30px auto 0;
-      border:1px solid rgba(3,68,89,.10);
-      background:rgba(255,255,255,.82);
-      border-radius:28px;
-      padding:32px;
-      box-shadow:var(--shadow-soft);
-      text-align:center;
-    }
-
-    .about-tiiqu strong{
-      color:var(--accent);
-      font-size:18px;
-      font-weight:800;
-    }
-
-    .about-tiiqu p{
-      max-width:900px;
-      margin:10px auto 0;
-      color:#586b7a;
-      font-family:Nunito, system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-      font-weight:700;
-      line-height:1.8;
-      font-size:16px;
-    }
-
-    .about-tiiqu a{
-      color:var(--accent);
-      font-weight:800;
-      text-decoration:none;
-    }
-
-    .about-tiiqu a:hover{
-      text-decoration:underline;
-    }
-
-    @media(max-width:980px){
-      .page{width:min(100% - 32px, 1240px); padding-top:24px;}
-      .topbar{justify-content:center; margin-bottom:20px;}
-      .hero{min-height:auto; padding:42px 0 48px;}
-      .question{margin-top:62px;}
-      .search-shell{grid-template-columns:58px 1fr; padding:10px;}
-      .primary-button{grid-column:1 / -1; min-height:64px; margin-top:10px;}
-      .button-row{margin-top:42px; gap:16px;}
-      .secondary-button{width:100%; max-width:430px; min-height:62px;}
-      .conversion-copy{margin-top:42px; font-size:18px;}
-      .results{grid-template-columns:1fr;}
-      .proofs-card{grid-column:auto;}
-      .metric-grid{grid-template-columns:1fr;}
-      .footer-note{flex-direction:column; align-items:flex-start;}
-    }
-
-    @media(max-width:560px){
-      .brand{font-size:58px;}
-      .slug{font-size:18px;}
-      .question{font-size:34px; margin-top:48px;}
-      .search-shell{border-radius:22px; min-height:84px;}
-      .claim-input{font-size:17px; min-height:62px;}
-      .panel,.verdict-card,.metrics-card,.proofs-card,.footer-note,.about-tiiqu{padding:24px; border-radius:22px;}
-      .top-cta{width:100%;}
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VaaS – Audit Verification Demo</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #f6f9fb;
+  color: #1a2b34;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 40px 20px;
+}
+
+h1 {
+  font-size: 42px;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: #5c6f7a;
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+.box {
+  background: white;
+  border-radius: 14px;
+  padding: 20px;
+  margin-top: 20px;
+  border: 1px solid #dfe7ec;
+}
+
+button {
+  padding: 12px 20px;
+  border-radius: 10px;
+  border: none;
+  background: #034459;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.badge {
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.ok { background:#e6f6ec; color:#157f3b; }
+.warn { background:#fff4e5; color:#b26a00; }
+.bad { background:#fde8e8; color:#b91c1c; }
+
+.source {
+  font-size: 14px;
+  color: #3a5563;
+}
+
+.small {
+  font-size: 14px;
+  color: #6b7d87;
+}
+</style>
 </head>
 
 <body>
-  <main class="page">
-    <div class="topbar">
-      <a class="top-cta" href="https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2?anonymous&ismsaljsauthenabled&ep=mLinkFromTile" target="_blank" rel="noopener">
-        <svg aria-hidden="true" width="21" height="21" viewBox="0 0 24 24" fill="none"><path d="M7 2v3M17 2v3M4 9h16M6 5h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Book Pilot Demo
-      </a>
-    </div>
+<div class="container">
 
-    <section class="hero" aria-labelledby="page-title">
-      <h1 id="page-title" class="brand">V.a.a.S</h1>
-      <p class="slug">Put every sustainability-report claim to the test.</p>
+<h1>Verify faster. Reduce audit effort.</h1>
+<div class="subtitle">
+Run structured verification checks on report statements.
+</div>
 
-      <h2 class="question">Is your Claim Defensible?</h2>
+<div class="box">
+<strong>Example claims (anonymised):</strong><br><br>
 
-      <div class="search-shell" role="search">
-        <div class="search-icon" aria-hidden="true">
-          <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="m21 21-4.35-4.35M10.8 18.2a7.4 7.4 0 1 1 0-14.8 7.4 7.4 0 0 1 0 14.8Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-        </div>
-        <textarea id="singleStatementBox" class="claim-input" rows="1" placeholder="Type a claim from a sustainability report…"></textarea>
-        <button class="primary-button" type="button" onclick="singleRunVerify()">Verify Claim</button>
-      </div>
+<button onclick="loadClaim(0)">GHG reduction target</button>
+<button onclick="loadClaim(1)">Regulatory alignment</button>
+<button onclick="loadClaim(2)">Energy KPI</button>
+</div>
 
-      <div class="examples" aria-label="Example claims">
-        <button class="chip-button" type="button" onclick="singleLoadExample('cement')">Example: Cement</button>
-        <button class="chip-button" type="button" onclick="singleLoadExample('credits')">Example: Carbon credits</button>
-        <button class="chip-button" type="button" onclick="singleLoadExample('industry')">Example: Industry average</button>
-        <button class="chip-button" type="button" onclick="singleLoadExample('blank')">Clear / Type my own</button>
-      </div>
+<div class="box">
+<strong>Statement under review</strong><br><br>
+<div id="claimText">Click an example above</div>
+</div>
 
-      <div class="button-row">
-        <button class="secondary-button" type="button" onclick="togglePanel('deterministicPanel')">
-          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m8.7 12.2 2.1 2.1 4.7-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          What is ‘deterministic verification’?
-        </button>
-        <button class="secondary-button" type="button" onclick="togglePanel('documentPanel')">
-          <svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M14 2H7a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7l-5-5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M14 2v5h5M9 13h6M9 17h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-          Process an Entire Document
-        </button>
-      </div>
+<div class="box">
+<button onclick="runCheck()">Run audit check</button>
+</div>
 
-      <div id="deterministicPanel" class="panel" aria-live="polite">
-        <h2>Deterministic verification</h2>
-        <p>
-          VaaS does not ask whether a claim “sounds plausible”. It maps the claim to a precise verification route, retrieves relevant evidence Units, and applies explicit checks such as exact values, ranges, existence checks, baseline consistency, or policy rules. The result is a repeatable defensibility signal with provenance.
-        </p>
-      </div>
+<div id="resultBox" class="box" style="display:none;">
+<h3>Verification result</h3>
 
-      <div id="documentPanel" class="panel" aria-live="polite">
-        <h2>Document-based pilot</h2>
-        <p>
-          For a full sustainability report, VaaS extracts report claims, groups them by verification route, and returns a defensibility ledger showing which claims are trusted, emerging, contested, or non-verifiable. This page demos the single-claim entry point; the document workflow is the natural pilot step.
-          <br><br>
-          <a class="secondary-button" style="margin-top:18px" href="https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2?anonymous&ismsaljsauthenabled&ep=mLinkFromTile" target="_blank" rel="noopener">Book a document pilot demo</a>
-        </p>
-      </div>
+<div id="status"></div>
 
-      <div id="singleLoader" class="loader">
-        <div class="spinner" aria-hidden="true"></div>
-        <div>
-          <div>Matching claim to evidence Units…</div>
-          <div style="font-size:13px;color:#718393;margin-top:5px;font-weight:700">Demo mode: deterministic scoring + hardcoded Units for portability.</div>
-        </div>
-      </div>
+<br>
 
-      <section id="singleResults" class="results" aria-live="polite">
-        <aside class="verdict-card">
-          <div id="singleIcon" class="status-icon">
-            <svg id="singleIconMark" aria-hidden="true" width="56" height="56" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="m8.6 12.2 2.3 2.3 4.8-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </div>
-          <div class="label">Verdict</div>
-          <div id="singleVerdict" class="verdict">—</div>
-          <div id="singleHint" class="hint">—</div>
-        </aside>
+<strong>Verification context</strong>
+<div class="small">
+Type: structured claim check<br>
+Typical audit use: validating reported targets, KPIs, or regulatory alignment
+</div>
 
-        <section class="metrics-card">
-          <div id="singleSubtopic" class="subtopic">—</div>
-          <p id="singleAnalysis" class="analysis">—</p>
+<br>
 
-          <div class="metric-grid">
-            <div class="metric">
-              <div class="label">Verification density</div>
-              <div id="singleDensityVal" class="metric-value">—</div>
-              <div class="bar"><div id="singleDensityFill" class="bar-fill"></div></div>
-              <div class="metric-help">Evidence coverage indicator</div>
-            </div>
-            <div class="metric">
-              <div class="label">Contradiction score</div>
-              <div id="singleContr" class="metric-value">—</div>
-              <div class="metric-help">0–100. Higher means more contradictory.</div>
-            </div>
-            <div class="metric">
-              <div class="label">Units analyzed</div>
-              <div id="singleUnits" class="metric-value">—</div>
-              <div class="metric-help">Matched Units for this claim</div>
-            </div>
-          </div>
-        </section>
+<strong>Supporting evidence</strong>
+<div id="sources"></div>
 
-        <section class="proofs-card">
-          <h2>Proofs</h2>
-          <p class="proof-intro">Each proof is a provenance-backed Unit used by the demo logic to compute the defensibility result.</p>
-          <div id="singleProofs"></div>
-        </section>
-      </section>
+<br>
 
-      <p class="conversion-copy">Start with a single claim. Scale to a document-based pilot and ongoing VaaS subscription.</p>
-      <p class="trust-line">Built for audit, assurance, and sustainability-report review workflows.</p>
-    </section>
+<strong>Audit impact (illustrative)</strong>
+<div class="small">
+Manual: ~30–60 min per claim<br>
+With structured verification: seconds
+</div>
 
-    <section class="footer-note">
-      <div>
-        <strong>Pilot-ready next step</strong>
-        <span>Use this page as the public demo entry point. The pilot can then process a selected report, apply strict claim templates, and return a structured defensibility ledger for audit review.</span>
-      </div>
-      <a class="primary-button" style="min-height:62px;font-size:16px" href="https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2?anonymous&ismsaljsauthenabled&ep=mLinkFromTile" target="_blank" rel="noopener">Book Pilot Demo</a>
-    </section>
+</div>
 
-    <section class="about-tiiqu" aria-label="About TiiQu">
-      <strong>Who TiiQu is</strong>
-      <p>
-        VaaS is built on top of Truth Library, the non-profit repository of scientific knowledge and Ground Truth on sustainability-related topics built and run by the award-winning Social Enterprise TiiQu — <a href="https://tiiqu.com" target="_blank" rel="noopener">tiiqu.com</a>.
-      </p>
-    </section>
-  </main>
+</div>
 
-  <script>
-    /* ============================================================
-       SINGLE CLAIM VERIFICATION – same logic as the uploaded
-       "single statement" section, adapted to the landing UI.
-       ============================================================ */
+<script>
 
-    const SINGLE_UNITS = [
-      {
-        subtopic:"Cement production",
-        title:"Global CO₂ uptake by cement materials accounts 1930–2023",
-        doi:"10.1038/s41597-024-04234-8",
-        url:"https://www.nature.com/articles/s41597-024-04234-8",
-        snippet:"Cement production accounting for about 7–8% of this total (global carbon emissions in 2023).",
-        metric:{ kind:"range", low:7.0, high:8.0, unit:"%" },
-        vitality:84
-      },
-      {
-        subtopic:"Cement production",
-        title:"Projecting future carbon emissions from cement production in developing countries",
-        doi:"10.1038/s41467-023-43660-x",
-        url:"https://www.nature.com/articles/s41467-023-43660-x",
-        snippet:"The sector is currently responsible for 5% to 8% of global anthropogenic CO₂ emissions every year.",
-        metric:{ kind:"range", low:5.0, high:8.0, unit:"%" },
-        vitality:77
-      },
-      {
-        subtopic:"Cement production",
-        title:"Concrete needs to lose its colossal carbon footprint",
-        doi:"10.1038/d41586-021-02612-5",
-        url:"https://www.nature.com/articles/d41586-021-02612-5",
-        snippet:"At least 8% of global emissions caused by humans come from the cement industry alone.",
-        metric:{ kind:"min", min:8.0, unit:"%" },
-        vitality:71
-      },
-      {
-        subtopic:"Carbon credits",
-        title:"UNEP Emissions Gap Report 2023 (net-zero credibility and offsets)",
-        doi:null,
-        url:"https://www.unep.org/resources/emissions-gap-report-2023",
-        snippet:"Discusses integrity challenges in net-zero claims and offsetting, including risks of overstatement.",
-        metric:null,
-        vitality:76
-      },
-      {
-        subtopic:"Carbon credits",
-        title:"Nature – Carbon offsetting (research topic hub)",
-        doi:null,
-        url:"https://www.nature.com/subjects/carbon-offsetting",
-        snippet:"Research landscape on carbon offsetting; signals active debate and integrity concerns.",
-        metric:null,
-        vitality:66
-      },
-      {
-        subtopic:"Industry average",
-        title:"EDGAR v5.0 Global Greenhouse Gas Emissions (GHG 1970–2019, sector & country)",
-        doi:null,
-        url:"https://edgar.jrc.ec.europa.eu/dataset_ghg50",
-        snippet:"EDGARv5.0 provides emissions of CO₂, CH₄ and N₂O per sector and country.",
-        metric:null,
-        vitality:63
-      }
-    ];
+const claims = [
+{
+text: "Scope 1 & 2 emissions reduced by 37% vs 2019.",
+status: "ok",
+sources: [
+{ name:"Internal KPI dataset (emissions table)", type:"internal" },
+{ name:"GHG Protocol Corporate Standard", type:"external" }
+]
+},
+{
+text: "Disclosures align with ESRS G1-4.",
+status: "ok",
+sources: [
+{ name:"Internal report disclosures", type:"internal" },
+{ name:"EU ESRS Regulation (EU) 2023/2772", type:"external" }
+]
+},
+{
+text: "Total energy consumption in 2024 was 855,897 MWh.",
+status: "warn",
+sources: [
+{ name:"Internal energy KPI tables", type:"internal" },
+{ name:"Energy reporting framework references", type:"external" }
+]
+}
+];
 
-    const SINGLE_EXAMPLES = {
-      cement: "Cement production accounts for about 7–8% of global anthropogenic CO₂ emissions.",
-      credits: "Our carbon credits fully eliminate all our residual emissions with no risk of reversal or over-crediting.",
-      emerging: "Cement production accounted for roughly 8% of global anthropogenic CO₂ emissions in 2023.",
-      industry: "In FY2025, we reduced Scope 1 and 2 GHG emissions by 28% versus our FY2019 baseline and outperformed the industry average.",
-      blank: ""
-    };
+let selected = null;
 
-    const SINGLE_POLICY = { minUnitsNonVerifiable: 2, minUnitsHighCoverage: 10 };
+function loadClaim(i){
+  selected = claims[i];
+  document.getElementById("claimText").innerText = selected.text;
+  document.getElementById("resultBox").style.display = "none";
+}
 
-    function togglePanel(id){
-      const panel = document.getElementById(id);
-      const other = id === "deterministicPanel" ? document.getElementById("documentPanel") : document.getElementById("deterministicPanel");
-      if(other) other.classList.remove("is-visible");
-      if(panel) panel.classList.toggle("is-visible");
-    }
+function runCheck(){
+  if(!selected){ alert("Select a claim"); return; }
 
-    function autoGrowClaimBox(){
-      const box = document.getElementById("singleStatementBox");
-      if(!box) return;
-      box.style.height = "auto";
-      box.style.height = Math.min(box.scrollHeight, 160) + "px";
-    }
+  const statusMap = {
+    ok: "<span class='badge ok'>Consistent with evidence</span>",
+    warn: "<span class='badge warn'>Limited supporting evidence</span>",
+    bad: "<span class='badge bad'>Conflicts with evidence</span>"
+  };
 
-    function singleLoadExample(k){
-      const box = document.getElementById("singleStatementBox");
-      if(k === "blank"){
-        box.value = "";
-        document.getElementById("singleResults").style.display = "none";
-        autoGrowClaimBox();
-        box.focus();
-        return;
-      }
-      box.value = SINGLE_EXAMPLES[k] || "";
-      autoGrowClaimBox();
-      box.focus();
-    }
+  document.getElementById("status").innerHTML = statusMap[selected.status];
 
-    function singleDetectSubtopic(statement){
-      const s = (statement || "").toLowerCase();
-      if(s.includes("cement") && s.includes("global")) return "Cement production";
-      if(s.includes("carbon credits") || s.includes("residual emissions") || s.includes("over-credit") || s.includes("reversal")) return "Carbon credits";
-      if(s.includes("industry average") || s.includes("scope 1") || s.includes("scope 2") || s.includes("baseline")) return "Industry average";
-      return "Unmapped claim";
-    }
+  const sourcesHTML = selected.sources.map(s => 
+    "<div class='source'>• " + s.name + " (" + s.type + ")</div>"
+  ).join("");
 
-    function singleEvidenceFor(statement){
-      const st = singleDetectSubtopic(statement);
-      return SINGLE_UNITS.filter(u => u.subtopic === st);
-    }
+  document.getElementById("sources").innerHTML = sourcesHTML;
 
-    function singleRetrievedCount(statement){
-      const s = (statement || "").toLowerCase();
-      if(s.includes("cement production accounts for about 7")) return 14;
-      if(s.includes("carbon credits fully eliminate") || s.includes("no risk")) return 6;
-      if(s.includes("roughly 8%") || s.includes("accounted for roughly 8%")) return 4;
-      if(s.includes("industry average") || s.includes("scope 1") || s.includes("scope 2") || s.includes("baseline")) return 1;
-      return 1;
-    }
+  document.getElementById("resultBox").style.display = "block";
+}
 
-    function singleExtractPercent(statement){
-      const s = (statement || "").toLowerCase();
-      let m = s.match(/(\d+(\.\d+)?)\s*[–-]\s*(\d+(\.\d+)?)\s*%/);
-      if(m) return {kind:"range", low:parseFloat(m[1]), high:parseFloat(m[3])};
-      m = s.match(/(\d+(\.\d+)?)\s*to\s*(\d+(\.\d+)?)\s*%/);
-      if(m) return {kind:"range", low:parseFloat(m[1]), high:parseFloat(m[3])};
-      m = s.match(/(\d+(\.\d+)?)\s*%/);
-      if(m) return {kind:"point", val:parseFloat(m[1])};
-      return null;
-    }
+</script>
 
-    function clampInt(x,a,b){ return Math.max(a, Math.min(b, x)); }
-
-    function singleContradictionVsMetric(statementPct, metric){
-      if(!statementPct || !metric) return null;
-      let cMid,cLow,cHigh;
-      if(statementPct.kind === "range"){
-        cLow = statementPct.low;
-        cHigh = statementPct.high;
-        cMid = (cLow + cHigh) / 2;
-      } else {
-        cLow = cHigh = cMid = statementPct.val;
-      }
-
-      if(metric.kind === "range"){
-        const mLow = metric.low, mHigh = metric.high;
-        if(cHigh >= mLow && cLow <= mHigh) return 0;
-        const nearest = (cMid < mLow) ? mLow : mHigh;
-        const dist = Math.abs(cMid - nearest);
-        const span = Math.max(0.5, (mHigh - mLow));
-        return clampInt(Math.round((dist / span) * 50), 0, 100);
-      }
-      if(metric.kind === "min"){
-        const min = metric.min;
-        if(cMid >= min) return 0;
-        return clampInt(Math.round(((min - cMid) / Math.max(1, min)) * 100), 0, 100);
-      }
-      return null;
-    }
-
-    function singleComputeDensity(n, contr){
-      const unitFactor = clampInt(Math.round((n / 14) * 100), 0, 100);
-      const contrPenalty = clampInt(contr, 0, 100);
-      return clampInt(Math.round(unitFactor * 0.75 + (100 - contrPenalty) * 0.25), 0, 100);
-    }
-
-    function singleStatusColor(cls){
-      const map = {
-        trusted: getComputedStyle(document.documentElement).getPropertyValue("--trusted").trim(),
-        emerging: getComputedStyle(document.documentElement).getPropertyValue("--emerging").trim(),
-        contested: getComputedStyle(document.documentElement).getPropertyValue("--contested").trim(),
-        nonver: getComputedStyle(document.documentElement).getPropertyValue("--nonver").trim()
-      };
-      return map[cls] || map.nonver;
-    }
-
-    function singleDensityColor(pct){
-      if(pct >= 75) return "linear-gradient(90deg, #16a34a, #22c55e)";
-      if(pct >= 45) return "linear-gradient(90deg, #f59e0b, #fbbf24)";
-      return "linear-gradient(90deg, #ef4444, #f59e0b)";
-    }
-
-    function singleEscapeHtml(str){
-      return (str || "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-    }
-
-    function singleHost(url){
-      try{ return (new URL(url)).host; }
-      catch(e){ return url; }
-    }
-
-    function singleVitalityPill(v){
-      let style = "border-color:#64748b;background:rgba(100,116,139,.18);color:#e5e7eb";
-      if(v >= 75) style = "border-color:#14532d;background:rgba(22,163,74,.18);color:#bbf7d0";
-      else if(v >= 55) style = "border-color:#92400e;background:rgba(245,158,11,.18);color:#fde68a";
-      return `<span class="vitality" style="${style}">Vitality: ${v}/100</span>`;
-    }
-
-    function singleUnitHTML(u){
-      const doiLine = u.doi ? `DOI: ${u.doi}` : "Source record (no DOI)";
-      return `
-        <article class="unit">
-          <div class="unit-title">${singleEscapeHtml(u.title)}</div>
-          <div class="unit-meta">${singleEscapeHtml(doiLine)}</div>
-          <div class="unit-meta">Source: <a href="${u.url}" target="_blank" rel="noopener">${singleHost(u.url)}</a></div>
-          ${u.snippet ? `<div class="snippet">${singleEscapeHtml(u.snippet)}</div>` : ""}
-          ${singleVitalityPill(u.vitality)}
-        </article>
-      `;
-    }
-
-    function singleVerify(statement){
-      const ev = singleEvidenceFor(statement);
-      const n = singleRetrievedCount(statement);
-
-      const pct = singleExtractPercent(statement);
-      const numeric = ev.map(u => singleContradictionVsMetric(pct, u.metric)).filter(v => v !== null);
-
-      let contr = 0;
-      if(numeric.length){
-        contr = Math.round(numeric.reduce((s,x) => s + x, 0) / numeric.length);
-      } else {
-        const s = (statement || "").toLowerCase();
-        if(s.includes("no risk") || s.includes("fully eliminate") || s.includes("all our residual")){
-          contr = 78;
-        } else {
-          contr = 0;
-        }
-      }
-
-      let label, cls, explain;
-      if(n < SINGLE_POLICY.minUnitsNonVerifiable){
-        label = "NON-VERIFIABLE";
-        cls = "nonver";
-        explain = "Fewer than 2 relevant Units were found. This type of claim is typically company-specific and cannot be externally verified by this demo evidence set.";
-      } else if(n >= SINGLE_POLICY.minUnitsHighCoverage){
-        if(contr >= 60){
-          label = "CONTESTED";
-          cls = "contested";
-          explain = "High evidence coverage, but matched Units strongly contradict the claim.";
-        } else {
-          label = "TRUSTED";
-          cls = "trusted";
-          explain = "High evidence coverage and Units co-validate the claim with no material contradictions.";
-        }
-      } else {
-        if(contr >= 60){
-          label = "CONTESTED";
-          cls = "contested";
-          explain = "Moderate evidence volume, but strong contradictions or integrity risks exist.";
-        } else if(n <= 4){
-          label = "EMERGING";
-          cls = "emerging";
-          explain = "Limited validation: relevant evidence aligns, but corroboration is not yet dense enough.";
-        } else {
-          label = "EMERGING";
-          cls = "emerging";
-          explain = "Some evidence exists, but not enough consensus yet.";
-        }
-      }
-
-      const density = singleComputeDensity(n, contr);
-      return { n, label, cls, explain, contr, density, evidence: ev };
-    }
-
-    function singleRunVerify(){
-      const statement = document.getElementById("singleStatementBox").value.trim();
-      if(!statement){
-        alert("Please enter a claim.");
-        return;
-      }
-
-      document.getElementById("singleResults").style.display = "none";
-      document.getElementById("singleLoader").style.display = "flex";
-
-      setTimeout(() => {
-        const subtopic = singleDetectSubtopic(statement);
-        const r = singleVerify(statement);
-
-        document.getElementById("singleSubtopic").textContent = subtopic;
-        document.getElementById("singleAnalysis").textContent = r.explain;
-
-        document.getElementById("singleIcon").style.background = singleStatusColor(r.cls);
-        document.getElementById("singleVerdict").textContent = r.label;
-
-        document.getElementById("singleHint").textContent =
-          (r.label === "TRUSTED") ? "Strong consensus across many Units" :
-          (r.label === "EMERGING") ? "Some alignment, but limited coverage" :
-          (r.label === "CONTESTED") ? "Evidence indicates contradictions" :
-          "Not enough evidence to verify";
-
-        document.getElementById("singleDensityVal").textContent = `${r.density}/100`;
-        const df = document.getElementById("singleDensityFill");
-        df.style.width = `${r.density}%`;
-        df.style.background = singleDensityColor(r.density);
-
-        document.getElementById("singleContr").textContent = r.contr;
-        document.getElementById("singleUnits").textContent = r.n;
-
-        const proofs = document.getElementById("singleProofs");
-        proofs.innerHTML = r.evidence.length
-          ? r.evidence.map(singleUnitHTML).join("")
-          : `<div class="snippet">No matched Units for this claim.</div>`;
-
-        document.getElementById("singleLoader").style.display = "none";
-        document.getElementById("singleResults").style.display = "grid";
-        document.getElementById("singleResults").scrollIntoView({behavior:"smooth", block:"start"});
-      }, 520);
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      const box = document.getElementById("singleStatementBox");
-      box.addEventListener("input", autoGrowClaimBox);
-      box.addEventListener("keydown", (event) => {
-        if(event.key === "Enter" && (event.ctrlKey || event.metaKey)) singleRunVerify();
-      });
-      singleLoadExample("cement");
-      document.getElementById("singleResults").style.display = "none";
-    });
-  </script>
 </body>
 </html>
