@@ -7,156 +7,69 @@
 
 <style>
 body {
+  font-family: Arial, sans-serif;
   margin: 0;
-  font-family: system-ui, -apple-system, Segoe UI, Arial, sans-serif;
   background: #f6f9fb;
-  color: #0f172a;
+  color: #1a2b34;
 }
 
 .container {
-  max-width: 1100px;
+  max-width: 1000px;
   margin: auto;
-  padding: 48px 24px 80px;
+  padding: 40px 20px;
 }
 
 h1 {
-  font-size: 56px;
-  margin: 0;
-  letter-spacing: -0.03em;
+  font-size: 40px;
+  margin-bottom: 8px;
 }
 
 .subtitle {
-  margin-top: 12px;
-  font-size: 20px;
-  color: #475569;
-}
-
-.search {
-  margin-top: 56px;
-  display: flex;
-  gap: 16px;
-}
-
-textarea {
-  flex: 1;
-  padding: 18px;
+  color: #5c6f7a;
   font-size: 18px;
+  margin-bottom: 28px;
+}
+
+.box {
+  background: white;
   border-radius: 14px;
-  border: 1px solid #cbd5e1;
-  resize: none;
+  padding: 20px;
+  margin-top: 20px;
+  border: 1px solid #dfe7ec;
 }
 
 button {
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: none;
   background: #034459;
   color: white;
-  border: none;
-  border-radius: 14px;
-  padding: 18px 26px;
-  font-weight: 700;
+  font-weight: bold;
   cursor: pointer;
 }
 
 button:hover { opacity: 0.9; }
 
-.examples {
-  margin-top: 18px;
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.examples button {
-  background: white;
-  color: #034459;
-  border: 1px solid #cbd5e1;
-}
-
-.result {
-  margin-top: 56px;
-  background: white;
-  border-radius: 20px;
-  border: 1px solid #e2e8f0;
-  padding: 32px;
-  display: none;
-}
-
-.verdict {
-  display: flex;
-  gap: 24px;
-  align-items: center;
-}
-
 .badge {
-  width: 96px;
-  height: 96px;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 14px;
-  color: white;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  display: inline-block;
 }
 
-.partial { background: #f59e0b; }
-.missing { background: #ef4444; }
-
-.verdict-text {
-  font-size: 26px;
-  font-weight: 800;
-}
-
-.metrics {
-  margin-top: 28px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 18px;
-}
-
-.metric {
-  background: #f8fafc;
-  border-radius: 14px;
-  padding: 18px;
-  border: 1px solid #e2e8f0;
-}
-
-.metric strong {
-  display: block;
-  font-size: 28px;
-}
-
-.section {
-  margin-top: 36px;
-}
+.partial { background:#fff4e5; color:#b26a00; }
+.missing { background:#fde8e8; color:#b91c1c; }
 
 .source {
-  margin-top: 12px;
-  padding: 14px;
-  background: #0f172a;
-  color: #e5e7eb;
-  border-radius: 12px;
   font-size: 14px;
+  color: #3a5563;
+  margin-top: 6px;
 }
 
-.source a {
-  color: #93c5fd;
-  text-decoration: none;
-}
-
-.improve {
-  margin-top: 16px;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
-  padding: 18px;
-  border-radius: 14px;
-  color: #7c2d12;
-}
-
-.cta {
-  margin-top: 48px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.small {
+  font-size: 14px;
+  color: #6b7d87;
 }
 </style>
 </head>
@@ -164,53 +77,57 @@ button:hover { opacity: 0.9; }
 <body>
 <div class="container">
 
-<h1>Is this claim verifiable?</h1>
+<h1>Verify faster. Reduce audit effort.</h1>
 <div class="subtitle">
-Audit‑grade verification of report statements — with clear guidance on what evidence is still required.
+Audit‑grade verification of report statements against external requirements — and clear guidance on what internal evidence is needed to complete verification.
 </div>
 
-<div class="search">
-<textarea id="claimBox" rows="2" placeholder="Paste a statement from an audit or sustainability report…"></textarea>
-<button onclick="verify()">Run audit check</button>
+<div class="box">
+<strong>Example claims (company anonymised):</strong><br><br>
+<button onclick="loadClaim(0)">Scope 1 reduction target</button>
+<button onclick="loadClaim(1)">Waste‑management hierarchy</button>
+<button onclick="loadClaim(2)">Market‑based Scope 2 methodology (demo‑weakened)</button>
 </div>
 
-<div class="examples">
-<button onclick="load(0)">Scope 1 reduction target</button>
-<button onclick="load(1)">Waste hierarchy alignment</button>
-<button onclick="load(2)">Scope 2 methodology (demo)</button>
+<div class="box">
+<strong>Statement under review</strong><br><br>
+<div id="claimText">Select a claim above</div>
 </div>
 
-<div id="result" class="result">
-  <div class="verdict">
-    <div id="badge" class="badge partial">AUDIT</div>
-    <div class="verdict-text" id="verdictText"></div>
-  </div>
+<div class="box">
+<button onclick="runCheck()">Run audit verification</button>
+</div>
 
-  <div class="metrics">
-    <div class="metric"><span>Evidence units</span><strong id="units"></strong></div>
-    <div class="metric"><span>Contradiction score</span><strong id="contradiction"></strong></div>
-    <div class="metric"><span>Verification state</span><strong id="state"></strong></div>
-  </div>
+<div id="resultBox" class="box" style="display:none;">
+<h3>Verification result</h3>
 
-  <div class="section">
-    <strong>External verification sources</strong>
-    <div id="sources"></div>
-  </div>
+<div id="status"></div>
 
-  <div class="improve">
-    <strong>Internal evidence required to complete verification</strong>
-    <div id="internal"></div>
-  </div>
+<br>
 
-  <div class="cta">
-    <div>
-      <strong>Next step</strong><br>
-      Apply this logic across a full report instead of one claim.
-    </div>
-    <button onclick="window.open('https://outlook.office.com/bookwithme','_blank')">
-      Book pilot
-    </button>
-  </div>
+<strong>External alignment</strong>
+<div id="external"></div>
+
+<br>
+
+<strong>Internal evidence required to complete verification</strong>
+<div id="internal"></div>
+
+<br>
+
+<strong>Audit interpretation</strong>
+<div class="small">
+External requirements are met or aligned.  
+Full verification requires internal source documents to be reviewed and confirmed by the auditor.
+</div>
+
+<br>
+
+<strong>Audit impact</strong>
+<div class="small">
+Manual reconstruction: ~30–60 minutes per claim  
+With structured verification: seconds to identify gaps
+</div>
 </div>
 
 </div>
@@ -218,79 +135,70 @@ Audit‑grade verification of report statements — with clear guidance on what 
 <script>
 const claims = [
 {
- text:"Scope 1 reduction target of 5% by 2025.",
- verdict:"Externally aligned – internal evidence required",
- units:3,
- contradiction:0,
- sources:[{
-  title:"No external requirement – company-defined target",
-  url:"#",
-  quote:"Targets are defined internally by the undertaking."
- }],
- internal:[
-  "Sustainability strategy or target statement",
-  "Board-approved ESG targets document",
-  "Sustainability report section defining the target"
- ]
+  text: "Scope 1 reduction target of 5% by 2025.",
+  external: [
+    "No external requirement — company‑defined target"
+  ],
+  internalNeeded: [
+    "Sustainability strategy or target statement",
+    "Board‑approved ESG targets document",
+    "Sustainability report section defining the target"
+  ],
+  note: "External alignment confirmed. Internal evidence required.",
+  status: "partial"
 },
 {
- text:"Waste-management approach is based on the EU Waste Framework Directive hierarchy.",
- verdict:"Externally aligned – internal evidence required",
- units:2,
- contradiction:0,
- sources:[{
-  title:"Directive 2008/98/EC – Article 4",
-  url:"https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098",
-  quote:"The waste hierarchy shall apply as a priority order in waste prevention and management legislation."
- }],
- internal:[
-  "Internal waste-management policy",
-  "Environmental management system procedures",
-  "Operational waste-handling guidelines"
- ]
+  text: "Waste‑management approach is based on the EU Waste Framework Directive hierarchy.",
+  external: [
+    "Directive 2008/98/EC — Article 4 (Waste hierarchy)"
+  ],
+  internalNeeded: [
+    "Internal waste‑management policy",
+    "Environmental management system (EMS) procedures",
+    "Sustainability report section describing waste approach"
+  ],
+  note: "Externally aligned with EU law. Internal policy evidence missing.",
+  status: "partial"
 },
 {
- text:"Market-based Scope 2 uses supplier contract emission factors where available.",
- verdict:"Alignment unclear (demo-weakened claim)",
- units:2,
- contradiction:42,
- sources:[{
-  title:"GHG Protocol Scope 2 Guidance",
-  url:"https://ghgprotocol.org/scope-2-guidance",
-  quote:"Supplier-specific emission factors may be used where contractual instruments meet the Scope 2 Quality Criteria."
- }],
- internal:[
-  "Internal Scope 2 calculation methodology",
-  "Supplier emission factor documentation",
-  "Disclosure notes explaining methodological choices"
- ]
+  text: "Market‑based Scope 2 uses supplier contract emission factors where available.",
+  external: [
+    "GHG Protocol Scope 2 Guidance — Chapters 6.2 and 6.11.3"
+  ],
+  internalNeeded: [
+    "Internal Scope 2 calculation methodology",
+    "Supplier‑specific emission factor documentation",
+    "Disclosure notes explaining methodology choices"
+  ],
+  note: "This claim was deliberately weakened for demo purposes to show how verification gaps are surfaced.",
+  status: "missing"
 }
 ];
 
-let current;
+let selected = null;
 
-function load(i){
- current = claims[i];
- document.getElementById("claimBox").value = current.text;
+function loadClaim(i){
+  selected = claims[i];
+  document.getElementById("claimText").innerText = selected.text;
+  document.getElementById("resultBox").style.display = "none";
 }
 
-function verify(){
- if(!current) return;
- document.getElementById("result").style.display="block";
- document.getElementById("verdictText").innerText=current.verdict;
- document.getElementById("units").innerText=current.units;
- document.getElementById("contradiction").innerText=current.contradiction+"/100";
- document.getElementById("state").innerText="Partial verification";
+function runCheck(){
+  if(!selected){ alert("Select a claim"); return; }
 
- document.getElementById("sources").innerHTML=current.sources.map(
-  s=>`<div class="source"><strong>${s.title}</strong><br>
-  ${s.url}${s.url}</a><br>
-  “${s.quote}”</div>`
- ).join("");
+  const badge = selected.status === "partial"
+    ? "<span class='badge partial'>Externally aligned – internal evidence required</span>"
+    : "<span class='badge missing'>Externally aligned – internal evidence missing</span>";
 
- document.getElementById("internal").innerHTML=current.internal.map(
-  i=>`• ${i}<br>`
- ).join("");
+  document.getElementById("status").innerHTML = badge;
+
+  document.getElementById("external").innerHTML =
+    selected.external.map(e => `<div class="source">• ${e}</div>`).join("");
+
+  document.getElementById("internal").innerHTML =
+    selected.internalNeeded.map(i => `<div class="source">• ${i}</div>`).join("");
+
+  document.getElementById("resultBox").style.display = "block";
 }
 </script>
 
