@@ -14,54 +14,69 @@ body {
 }
 
 .container {
-  max-width: 1100px;
+  max-width: 1120px;
   margin: auto;
-  padding: 48px 24px 80px;
+  padding: 48px 24px 96px;
 }
 
-h1 {
-  font-size: 56px;
+/* --- HERO --- */
+.hero {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.hero h1 {
+  font-size: 64px;
   margin: 0;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
 }
 
-.subtitle {
-  margin-top: 12px;
-  font-size: 20px;
+.hero p {
+  margin-top: 14px;
+  font-size: 22px;
   color: #475569;
 }
 
-.search {
-  margin-top: 56px;
+/* --- SEARCH --- */
+.search-box {
+  margin: 56px auto 0;
+  max-width: 900px;
+  background: white;
+  border-radius: 24px;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 20px 50px rgba(15,23,42,.08);
+  padding: 18px;
   display: flex;
   gap: 16px;
 }
 
 textarea {
   flex: 1;
-  padding: 18px;
-  font-size: 18px;
-  border-radius: 14px;
-  border: 1px solid #cbd5e1;
+  border: none;
+  font-size: 20px;
+  padding: 14px;
   resize: none;
+  outline: none;
 }
 
 button {
   background: #034459;
   color: white;
   border: none;
-  border-radius: 14px;
-  padding: 18px 26px;
-  font-weight: 700;
+  border-radius: 16px;
+  padding: 18px 28px;
+  font-weight: 800;
   cursor: pointer;
 }
 
-button:hover { opacity: 0.9; }
+button:hover { opacity: .9; }
 
+/* --- EXAMPLES --- */
 .examples {
-  margin-top: 18px;
+  margin-top: 20px;
   display: flex;
   gap: 12px;
+  justify-content: center;
   flex-wrap: wrap;
 }
 
@@ -69,32 +84,36 @@ button:hover { opacity: 0.9; }
   background: white;
   color: #034459;
   border: 1px solid #cbd5e1;
+  padding: 10px 16px;
+  font-size: 14px;
 }
 
+/* --- RESULTS --- */
 .result {
-  margin-top: 56px;
+  margin-top: 64px;
   background: white;
-  border-radius: 20px;
+  border-radius: 28px;
   border: 1px solid #e2e8f0;
-  padding: 32px;
+  padding: 36px;
   display: none;
 }
 
+/* --- VERDICT --- */
 .verdict {
   display: flex;
-  gap: 24px;
+  gap: 28px;
   align-items: center;
 }
 
 .badge {
-  width: 96px;
-  height: 96px;
-  border-radius: 20px;
+  width: 112px;
+  height: 112px;
+  border-radius: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
-  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: .08em;
   color: white;
 }
 
@@ -102,10 +121,11 @@ button:hover { opacity: 0.9; }
 .missing { background: #ef4444; }
 
 .verdict-text {
-  font-size: 26px;
-  font-weight: 800;
+  font-size: 28px;
+  font-weight: 900;
 }
 
+/* --- METRICS --- */
 .metrics {
   margin-top: 28px;
   display: grid;
@@ -115,160 +135,11 @@ button:hover { opacity: 0.9; }
 
 .metric {
   background: #f8fafc;
-  border-radius: 14px;
-  padding: 18px;
+  border-radius: 18px;
+  padding: 20px;
   border: 1px solid #e2e8f0;
 }
 
-.metric strong {
-  display: block;
-  font-size: 28px;
-}
-
-.section {
-  margin-top: 36px;
-}
-
-.source {
-  margin-top: 12px;
-  padding: 14px;
-  background: #0f172a;
-  color: #e5e7eb;
-  border-radius: 12px;
-  font-size: 14px;
-}
-
-.source a {
-  color: #93c5fd;
-  text-decoration: none;
-}
-
-.improve {
-  margin-top: 16px;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
-  padding: 18px;
-  border-radius: 14px;
-  color: #7c2d12;
-}
-
-.cta {
-  margin-top: 48px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-</style>
-</head>
-
-<body>
-<div class="container">
-
-<h1>Is this claim verifiable?</h1>
-<div class="subtitle">
-Audit‑grade verification of report statements — with clear guidance on what evidence is still required.
-</div>
-
-<div class="search">
-<textarea id="claimBox" rows="2" placeholder="Paste a statement from an audit or sustainability report…"></textarea>
-<button onclick="verify()">Run audit check</button>
-</div>
-
-<div class="examples">
-<button onclick="load(0)">Scope 1 reduction target</button>
-<button onclick="load(1)">Waste hierarchy alignment</button>
-<button onclick="load(2)">Scope 2 methodology (demo)</button>
-</div>
-
-<div id="result" class="result">
-  <div class="verdict">
-    <div id="badge" class="badge partial">AUDIT</div>
-    <div class="verdict-text" id="verdictText"></div>
-  </div>
-
-  <div class="metrics">
-    <div class="metric"><span>Evidence units</span><strong id="units"></strong></div>
-    <div class="metric"><span>Contradiction score</span><strong id="contradiction"></strong></div>
-    <div class="metric"><span>Verification state</span><strong id="state"></strong></div>
-  </div>
-
-  <div class="section">
-    <strong>External verification sources</strong>
-    <div id="sources"></div>
-  </div>
-
-  <div class="improve">
-    <strong>Internal evidence required to complete verification</strong>
-    <div id="internal"></div>
-  </div>
-
-  <div class="cta">
-    <div>
-      <strong>Next step</strong><br>
-      Apply this logic across a full report instead of one claim.
-    </div>
-    <button onclick="window.open('https://outlook.office.com/bookwithme','_blank')">
-      Book pilot
-    </button>
-  </div>
-</div>
-
-</div>
-
-<script>
-const claims = [
-{
- text:"Scope 1 reduction target of 5% by 2025.",
- verdict:"Externally aligned – internal evidence required",
- units:3,
- contradiction:0,
- sources:[{
-  title:"No external requirement – company-defined target",
-  url:"#",
-  quote:"Targets are defined internally by the undertaking."
- }],
- internal:[
-  "Sustainability strategy or target statement",
-  "Board-approved ESG targets document",
-  "Sustainability report section defining the target"
- ]
-},
-{
- text:"Waste-management approach is based on the EU Waste Framework Directive hierarchy.",
- verdict:"Externally aligned – internal evidence required",
- units:2,
- contradiction:0,
- sources:[{
-  title:"Directive 2008/98/EC – Article 4",
-  url:"https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098",
-  quote:"The waste hierarchy shall apply as a priority order in waste prevention and management legislation."
- }],
- internal:[
-  "Internal waste-management policy",
-  "Environmental management system procedures",
-  "Operational waste-handling guidelines"
- ]
-},
-{
- text:"Market-based Scope 2 uses supplier contract emission factors where available.",
- verdict:"Alignment unclear (demo-weakened claim)",
- units:2,
- contradiction:42,
- sources:[{
-  title:"GHG Protocol Scope 2 Guidance",
-  url:"https://ghgprotocol.org/scope-2-guidance",
-  quote:"Supplier-specific emission factors may be used where contractual instruments meet the Scope 2 Quality Criteria."
- }],
- internal:[
-  "Internal Scope 2 calculation methodology",
-  "Supplier emission factor documentation",
-  "Disclosure notes explaining methodological choices"
- ]
-}
-];
-
-let current;
-
-function load(i){
- current = claims[i];
-
+.metric span {
+  color: #64748b;
+  font-size: 13px;
