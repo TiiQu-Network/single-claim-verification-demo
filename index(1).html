@@ -19,6 +19,7 @@ body {
   padding: 48px 24px 96px;
 }
 
+/* --- HERO --- */
 .hero {
   text-align: center;
   margin-top: 40px;
@@ -36,6 +37,7 @@ body {
   color: #475569;
 }
 
+/* --- SEARCH --- */
 .search-box {
   margin: 56px auto 0;
   max-width: 900px;
@@ -69,6 +71,7 @@ button {
 
 button:hover { opacity: .9; }
 
+/* --- EXAMPLES --- */
 .examples {
   margin-top: 20px;
   display: flex;
@@ -85,6 +88,7 @@ button:hover { opacity: .9; }
   font-size: 14px;
 }
 
+/* --- RESULTS --- */
 .result {
   margin-top: 64px;
   background: white;
@@ -94,6 +98,7 @@ button:hover { opacity: .9; }
   display: none;
 }
 
+/* --- VERDICT --- */
 .verdict {
   display: flex;
   gap: 28px;
@@ -120,6 +125,7 @@ button:hover { opacity: .9; }
   font-weight: 900;
 }
 
+/* --- METRICS --- */
 .metrics {
   margin-top: 28px;
   display: grid;
@@ -146,6 +152,7 @@ button:hover { opacity: .9; }
   font-size: 30px;
 }
 
+/* --- SOURCES --- */
 .section {
   margin-top: 40px;
 }
@@ -164,6 +171,7 @@ button:hover { opacity: .9; }
   text-decoration: none;
 }
 
+/* --- IMPROVE --- */
 .improve {
   margin-top: 18px;
   background: #fff7ed;
@@ -171,6 +179,32 @@ button:hover { opacity: .9; }
   padding: 20px;
   border-radius: 18px;
   color: #7c2d12;
+}
+
+/* --- ACTIONS --- */
+.actions {
+  margin-top: 56px;
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.secondary {
+  background: white;
+  color: #034459;
+  border: 1px solid #cbd5e1;
+}
+
+/* --- PANELS --- */
+.panel {
+  display: none;
+  margin-top: 24px;
+  background: #f8fafc;
+  border-radius: 18px;
+  padding: 20px;
+  border: 1px solid #e2e8f0;
+  color: #334155;
 }
 </style>
 </head>
@@ -180,12 +214,11 @@ button:hover { opacity: .9; }
 
 <div class="hero">
   <h1>Is this claim verifiable?</h1>
-  <p>Audit‑grade verification of report statements — with clear guidance on missing evidence.</p>
+  <p>Audit‑grade verification of report statements — with clear guidance on what evidence is still required.</p>
 </div>
 
 <div class="search-box">
-  <textarea id="claimBox" rows="2"
-    placeholder="Paste a statement from an audit or sustainability report…"></textarea>
+  <textarea id="claimBox" rows="2" placeholder="Paste a statement from an audit or sustainability report…"></textarea>
   <button onclick="verify()">Run audit check</button>
 </div>
 
@@ -193,6 +226,19 @@ button:hover { opacity: .9; }
   <button onclick="load(0)">Scope 1 reduction target</button>
   <button onclick="load(1)">Waste hierarchy alignment</button>
   <button onclick="load(2)">Market‑based Scope 2 methodology</button>
+</div>
+
+<div class="actions">
+  <button class="secondary" onclick="toggle('deterministic')">What does deterministic verification mean?</button>
+  document-demo.htmlNow test with a full document</button>
+  <button onclick="window.open('https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2','_blank')">
+    Book a pilot
+  </button>
+</div>
+
+<div id="deterministic" class="panel">
+  Deterministic verification means the claim is checked against explicit sources and rules.
+  The same input always produces the same result, with traceable evidence — unlike probabilistic AI answers.
 </div>
 
 <div id="result" class="result">
@@ -228,16 +274,15 @@ const claims = [
  units:3,
  contradiction:0,
  sources:[{
-  title:"Company‑defined target",
+  title:"Company‑defined target (no external requirement)",
   url:"#",
-  quote:"Targets are defined internally by the undertaking."
+  quote:"Targets are set internally by the undertaking."
  }],
  internal:[
   "Sustainability strategy or target statement",
   "Board‑approved ESG targets document",
   "Sustainability report section defining the target"
- ],
- state:"partial"
+ ]
 },
 {
  text:"Waste‑management approach is based on the EU Waste Framework Directive hierarchy.",
@@ -253,12 +298,11 @@ const claims = [
   "Internal waste‑management policy",
   "Environmental management system procedures",
   "Operational waste‑handling guidelines"
- ],
- state:"partial"
+ ]
 },
 {
  text:"Market‑based Scope 2 uses supplier contract emission factors where available.",
- verdict:"Alignment unclear – internal evidence missing",
+ verdict:"Alignment unclear (demo‑weakened claim)",
  units:2,
  contradiction:42,
  sources:[{
@@ -270,57 +314,39 @@ const claims = [
   "Internal Scope 2 calculation methodology",
   "Supplier emission factor documentation",
   "Disclosure notes explaining methodological choices"
- ],
- state:"missing"
+ ]
 }
 ];
 
-let current = null;
+let current;
 
 function load(i){
-  current = claims[i];
-  document.getElementById("claimBox").value = current.text;
+ current = claims[i];
+ document.getElementById("claimBox").value = current.text;
 }
 
 function verify(){
-  const text = document.getElementById("claimBox").value.trim();
-  if(!text) return;
+ if(!current) return;
+ document.getElementById("result").style.display="block";
+ document.getElementById("verdictText").innerText=current.verdict;
+ document.getElementById("units").innerText=current.units;
+ document.getElementById("contradiction").innerText=current.contradiction+"/100";
+ document.getElementById("state").innerText="Partial verification";
 
-  // fallback: generic audit behaviour
-  const c = current || {
-    verdict:"Externally aligned – internal evidence required",
-    units:1,
-    contradiction:0,
-    sources:[{
-      title:"External requirement or benchmark",
-      url:"#",
-      quote:"External alignment identified. Internal evidence not provided."
-    }],
-    internal:["Relevant internal policy, KPI table, or methodology document"],
-    state:"partial"
-  };
+ document.getElementById("sources").innerHTML=current.sources.map(
+  s=>`<div class="source"><strong>${s.title}</strong><br>
+  ${s.url}${s.url}</a><br>
+  “${s.quote}”</div>`
+ ).join("");
 
-  const badge = document.getElementById("badge");
-  badge.className = "badge " + c.state;
+ document.getElementById("internal").innerHTML=current.internal.map(
+  i=>`• ${i}<br>`
+ ).join("");
+}
 
-  document.getElementById("verdictText").innerText = c.verdict;
-  document.getElementById("units").innerText = c.units;
-  document.getElementById("contradiction").innerText = c.contradiction + "/100";
-  document.getElementById("state").innerText = "Partial verification";
-
-  document.getElementById("sources").innerHTML =
-    c.sources.map(s => `
-      <div class="source">
-        <strong>${s.title}</strong><br>
-        <a href="${s.url}"a><br>
-        “${s.quote}”
-      </div>
-    `).join("");
-
-  document.getElementById("internal").innerHTML =
-    c.internal.map(i => `• ${i}<br>`).join("");
-
-  document.getElementById("result").style.display = "block";
+function toggle(id){
+ const p=document.getElementById(id);
+ p.style.display=p.style.display==="block"?"none":"block";
 }
 </script>
 
