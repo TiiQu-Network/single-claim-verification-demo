@@ -20,14 +20,14 @@ body {
 }
 
 h1 {
-  font-size: 42px;
-  margin-bottom: 10px;
+  font-size: 40px;
+  margin-bottom: 8px;
 }
 
 .subtitle {
   color: #5c6f7a;
   font-size: 18px;
-  margin-bottom: 30px;
+  margin-bottom: 28px;
 }
 
 .box {
@@ -39,7 +39,7 @@ h1 {
 }
 
 button {
-  padding: 12px 20px;
+  padding: 12px 18px;
   border-radius: 10px;
   border: none;
   background: #034459;
@@ -48,24 +48,23 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  opacity: 0.9;
-}
+button:hover { opacity: 0.9; }
 
 .badge {
   padding: 6px 10px;
   border-radius: 8px;
   font-size: 12px;
   font-weight: bold;
+  display: inline-block;
 }
 
-.ok { background:#e6f6ec; color:#157f3b; }
-.warn { background:#fff4e5; color:#b26a00; }
-.bad { background:#fde8e8; color:#b91c1c; }
+.partial { background:#fff4e5; color:#b26a00; }
+.missing { background:#fde8e8; color:#b91c1c; }
 
 .source {
   font-size: 14px;
   color: #3a5563;
+  margin-top: 6px;
 }
 
 .small {
@@ -80,24 +79,23 @@ button:hover {
 
 <h1>Verify faster. Reduce audit effort.</h1>
 <div class="subtitle">
-Run structured verification checks on report statements.
+Audit‑grade verification of report statements against external requirements — and clear guidance on what internal evidence is needed to complete verification.
 </div>
 
 <div class="box">
-<strong>Example claims (anonymised):</strong><br><br>
-
-<button onclick="loadClaim(0)">GHG reduction target</button>
-<button onclick="loadClaim(1)">Regulatory alignment</button>
-<button onclick="loadClaim(2)">Energy KPI</button>
+<strong>Example claims (company anonymised):</strong><br><br>
+<button onclick="loadClaim(0)">Scope 1 reduction target</button>
+<button onclick="loadClaim(1)">Waste‑management hierarchy</button>
+<button onclick="loadClaim(2)">Market‑based Scope 2 methodology (demo‑weakened)</button>
 </div>
 
 <div class="box">
 <strong>Statement under review</strong><br><br>
-<div id="claimText">Click an example above</div>
+<div id="claimText">Select a claim above</div>
 </div>
 
 <div class="box">
-<button onclick="runCheck()">Run audit check</button>
+<button onclick="runCheck()">Run audit verification</button>
 </div>
 
 <div id="resultBox" class="box" style="display:none;">
@@ -107,55 +105,73 @@ Run structured verification checks on report statements.
 
 <br>
 
-<strong>Verification context</strong>
+<strong>External alignment</strong>
+<div id="external"></div>
+
+<br>
+
+<strong>Internal evidence required to complete verification</strong>
+<div id="internal"></div>
+
+<br>
+
+<strong>Audit interpretation</strong>
 <div class="small">
-Type: structured claim check<br>
-Typical audit use: validating reported targets, KPIs, or regulatory alignment
+External requirements are met or aligned.  
+Full verification requires internal source documents to be reviewed and confirmed by the auditor.
 </div>
 
 <br>
 
-<strong>Supporting evidence</strong>
-<div id="sources"></div>
-
-<br>
-
-<strong>Audit impact (illustrative)</strong>
+<strong>Audit impact</strong>
 <div class="small">
-Manual: ~30–60 min per claim<br>
-With structured verification: seconds
+Manual reconstruction: ~30–60 minutes per claim  
+With structured verification: seconds to identify gaps
 </div>
-
 </div>
 
 </div>
 
 <script>
-
 const claims = [
 {
-text: "Scope 1 & 2 emissions reduced by 37% vs 2019.",
-status: "ok",
-sources: [
-{ name:"Internal KPI dataset (emissions table)", type:"internal" },
-{ name:"GHG Protocol Corporate Standard", type:"external" }
-]
+  text: "Scope 1 reduction target of 5% by 2025.",
+  external: [
+    "No external requirement — company‑defined target"
+  ],
+  internalNeeded: [
+    "Sustainability strategy or target statement",
+    "Board‑approved ESG targets document",
+    "Sustainability report section defining the target"
+  ],
+  note: "External alignment confirmed. Internal evidence required.",
+  status: "partial"
 },
 {
-text: "Disclosures align with ESRS G1-4.",
-status: "ok",
-sources: [
-{ name:"Internal report disclosures", type:"internal" },
-{ name:"EU ESRS Regulation (EU) 2023/2772", type:"external" }
-]
+  text: "Waste‑management approach is based on the EU Waste Framework Directive hierarchy.",
+  external: [
+    "Directive 2008/98/EC — Article 4 (Waste hierarchy)"
+  ],
+  internalNeeded: [
+    "Internal waste‑management policy",
+    "Environmental management system (EMS) procedures",
+    "Sustainability report section describing waste approach"
+  ],
+  note: "Externally aligned with EU law. Internal policy evidence missing.",
+  status: "partial"
 },
 {
-text: "Total energy consumption in 2024 was 855,897 MWh.",
-status: "warn",
-sources: [
-{ name:"Internal energy KPI tables", type:"internal" },
-{ name:"Energy reporting framework references", type:"external" }
-]
+  text: "Market‑based Scope 2 uses supplier contract emission factors where available.",
+  external: [
+    "GHG Protocol Scope 2 Guidance — Chapters 6.2 and 6.11.3"
+  ],
+  internalNeeded: [
+    "Internal Scope 2 calculation methodology",
+    "Supplier‑specific emission factor documentation",
+    "Disclosure notes explaining methodology choices"
+  ],
+  note: "This claim was deliberately weakened for demo purposes to show how verification gaps are surfaced.",
+  status: "missing"
 }
 ];
 
@@ -170,23 +186,20 @@ function loadClaim(i){
 function runCheck(){
   if(!selected){ alert("Select a claim"); return; }
 
-  const statusMap = {
-    ok: "<span class='badge ok'>Consistent with evidence</span>",
-    warn: "<span class='badge warn'>Limited supporting evidence</span>",
-    bad: "<span class='badge bad'>Conflicts with evidence</span>"
-  };
+  const badge = selected.status === "partial"
+    ? "<span class='badge partial'>Externally aligned – internal evidence required</span>"
+    : "<span class='badge missing'>Externally aligned – internal evidence missing</span>";
 
-  document.getElementById("status").innerHTML = statusMap[selected.status];
+  document.getElementById("status").innerHTML = badge;
 
-  const sourcesHTML = selected.sources.map(s => 
-    "<div class='source'>• " + s.name + " (" + s.type + ")</div>"
-  ).join("");
+  document.getElementById("external").innerHTML =
+    selected.external.map(e => `<div class="source">• ${e}</div>`).join("");
 
-  document.getElementById("sources").innerHTML = sourcesHTML;
+  document.getElementById("internal").innerHTML =
+    selected.internalNeeded.map(i => `<div class="source">• ${i}</div>`).join("");
 
   document.getElementById("resultBox").style.display = "block";
 }
-
 </script>
 
 </body>
