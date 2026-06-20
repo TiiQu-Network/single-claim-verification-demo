@@ -14,12 +14,12 @@ body {
 }
 
 .container {
-  max-width: 1120px;
+  max-width: 1200px;
   margin: auto;
   padding: 56px 24px 96px;
 }
 
-/* ---------- HERO ---------- */
+/* HERO */
 .hero {
   text-align: center;
 }
@@ -27,7 +27,7 @@ body {
 .hero h1 {
   font-size: 72px;
   margin: 0;
-  letter-spacing: 0.08em;
+  letter-spacing: .08em;
 }
 
 .hero p {
@@ -36,10 +36,10 @@ body {
   color: #475569;
 }
 
-/* ---------- SEARCH ---------- */
+/* SEARCH */
 .search {
   margin: 64px auto 0;
-  max-width: 920px;
+  max-width: 960px;
   background: white;
   border-radius: 28px;
   border: 1px solid #cbd5e1;
@@ -70,7 +70,7 @@ button {
 
 button:hover { opacity: .9; }
 
-/* ---------- EXAMPLES ---------- */
+/* EXAMPLES */
 .examples {
   margin-top: 22px;
   display: flex;
@@ -87,7 +87,7 @@ button:hover { opacity: .9; }
   padding: 10px 16px;
 }
 
-/* ---------- ACTIONS ---------- */
+/* ACTIONS */
 .actions {
   margin-top: 28px;
   display: flex;
@@ -102,7 +102,7 @@ button:hover { opacity: .9; }
   border: 1px solid #cbd5e1;
 }
 
-/* ---------- RESULT ---------- */
+/* RESULT */
 .result {
   margin-top: 72px;
   background: white;
@@ -112,7 +112,7 @@ button:hover { opacity: .9; }
   display: none;
 }
 
-/* ---------- VERDICT ---------- */
+/* VERDICT */
 .verdict {
   display: flex;
   gap: 28px;
@@ -131,6 +131,7 @@ button:hover { opacity: .9; }
   letter-spacing: .08em;
 }
 
+.green { background: #16a34a; }
 .orange { background: #f59e0b; }
 .red { background: #ef4444; }
 
@@ -139,7 +140,7 @@ button:hover { opacity: .9; }
   font-weight: 900;
 }
 
-/* ---------- METRICS ---------- */
+/* METRICS */
 .metrics {
   margin-top: 32px;
   display: grid;
@@ -166,191 +167,9 @@ button:hover { opacity: .9; }
   font-size: 32px;
 }
 
-/* ---------- SOURCES ---------- */
+/* PROOFS */
 .section {
   margin-top: 40px;
 }
 
 .proof {
-  margin-top: 16px;
-  padding: 18px;
-  background: #0f172a;
-  color: #e5e7eb;
-  border-radius: 16px;
-  font-size: 14px;
-}
-
-.proof a {
-  color: #93c5fd;
-  text-decoration: none;
-}
-
-/* ---------- IMPROVEMENT ---------- */
-.improve {
-  margin-top: 28px;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
-  padding: 22px;
-  border-radius: 20px;
-  color: #7c2d12;
-}
-
-/* ---------- FOOTER CTA ---------- */
-.footer-cta {
-  margin-top: 48px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-</style>
-</head>
-
-<body>
-<div class="container">
-
-<div class="hero">
-  <h1>V.a.a.S</h1>
-  <p>Audit‑grade verification of report claims.</p>
-</div>
-
-<div class="search">
-  <textarea id="claimBox" rows="2" placeholder="Paste a claim from a report…"></textarea>
-  <button onclick="verify()">Audit this claim</button>
-</div>
-
-<div class="examples">
-  <button onclick="load(0)">Scope 1 reduction target</button>
-  <button onclick="load(1)">Waste hierarchy compliance</button>
-  <button onclick="load(2)">Scope 2 methodology</button>
-</div>
-
-<div class="actions">
-  <button class="secondary" onclick="toggleExplain()">What is deterministic verification?</button>
-  <button class="secondary" onclick="window.location.href='document-demon" class="improve" style="display:none;">
-Deterministic verification means the same claim is always checked against the same explicit sources and rules,
-with traceable evidence. No probabilistic answers. No hidden reasoning.
-</div>
-
-<div id="result" class="result">
-  <div class="verdict">
-    <div id="tree" class="tree orange">AUDIT</div>
-    <div class="verdict-text" id="verdictText"></div>
-  </div>
-
-  <div class="metrics">
-    <div class="metric"><span>Units analysed</span><strong id="units"></strong></div>
-    <div class="metric"><span>Contradiction score</span><strong id="contradiction"></strong></div>
-  </div>
-
-  <div class="section">
-    <strong>External verification proofs</strong>
-    <div id="proofs"></div>
-  </div>
-
-  <div class="improve">
-    <strong>How to improve validation</strong><br>
-    Add internal evidence such as:
-    <div id="internal"></div>
-  </div>
-
-  <div class="footer-cta">
-    <div>
-      <strong>Audit teams use this to scale verification</strong><br>
-      Focus effort only on claims that lack evidence.
-    </div>
-    <button onclick="window.open('https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2','_blank')">
-      Discuss a pilot
-    </button>
-  </div>
-</div>
-
-</div>
-
-<script>
-const claims = [
-{
- text:"Scope 1 reduction target of 5% by 2025.",
- verdict:"Externally aligned — internal evidence required",
- units:3,
- contradiction:0,
- proofs:[{
-  title:"Company‑defined target",
-  url:"#",
-  quote:"Targets are defined internally by the undertaking."
- }],
- internal:[
-  "Sustainability strategy document",
-  "Board‑approved ESG targets",
-  "Sustainability report section defining targets"
- ]
-},
-{
- text:"Waste‑management approach follows the EU Waste Framework Directive hierarchy.",
- verdict:"Externally aligned — internal evidence required",
- units:2,
- contradiction:0,
- proofs:[{
-  title:"Directive 2008/98/EC — Article 4",
-  url:"https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098",
-  quote:"The waste hierarchy shall apply as a priority order in waste prevention and management."
- }],
- internal:[
-  "Internal waste‑management policy",
-  "Environmental management system procedures"
- ]
-},
-{
- text:"Market‑based Scope 2 uses supplier contract emission factors where available.",
- verdict:"Alignment unclear",
- units:2,
- contradiction:42,
- proofs:[{
-  title:"GHG Protocol Scope 2 Guidance",
-  url:"https://ghgprotocol.org/scope-2-guidance",
-  quote:"Supplier‑specific emission factors may be used where contractual instruments meet the Scope 2 Quality Criteria."
- }],
- internal:[
-  "Internal Scope 2 calculation methodology",
-  "Supplier emission factor documentation"
- ]
-}
-];
-
-let current=null;
-
-function load(i){
- current=claims[i];
- document.getElementById("claimBox").value=current.text;
-}
-
-function verify(){
- const text=document.getElementById("claimBox").value.trim();
- if(!text) return;
- const c=current||claims[0];
- document.getElementById("result").style.display="block";
- document.getElementById("verdictText").innerText=c.verdict;
- document.getElementById("units").innerText=c.units;
- document.getElementById("contradiction").innerText=c.contradiction+"/100";
- document.getElementById("tree").className="tree "+(c.contradiction>30?"red":"orange");
-
- document.getElementById("proofs").innerHTML=c.proofs.map(p=>`
-  <div class="proof">
-    <strong>${p.title}</strong><br>
-    <a href="${purl}</a><br>
-    “${p.quote}”
-  </div>
- `).join("");
-
- document.getElementById("internal").innerHTML=c.internal.map(i=>"• "+i+"<br>").join("");
-}
-
-function toggleExplain(){
- const e=document.getElementById("explain");
- e.style.display=e.style.display==="none"?"block":"none";
-}
-</script>
-
-</body>
-</html>
