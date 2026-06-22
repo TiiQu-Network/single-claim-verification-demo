@@ -51,6 +51,83 @@
   }
   .hero p{color:#4a5b63;font-size:18px;margin-top:14px;max-width:560px;margin-left:auto;margin-right:auto;}
 
+  .deterministic-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    margin-top:18px;
+    background:white;
+    color:var(--teal);
+    border:1px solid var(--line);
+    padding:9px 18px;
+    border-radius:999px;
+    font-size:14px;
+    font-weight:700;
+  }
+  .deterministic-btn:hover{border-color:var(--teal-light);background:#eff8fa;}
+  .deterministic-btn .icon{
+    width:18px;height:18px;border-radius:50%;
+    background:var(--teal-light);color:white;
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:800;flex-shrink:0;
+  }
+
+  .deterministic-panel{
+    display:none;
+    max-width:680px;
+    margin:16px auto 0;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:18px 22px;
+    text-align:left;
+    box-shadow:0 4px 18px rgba(3,68,89,.06);
+    animation:fadeIn .2s ease;
+  }
+  .deterministic-panel.show{display:block;}
+  .deterministic-panel p{
+    color:#3a4a51;
+    font-size:14.5px;
+    line-height:1.65;
+    margin:0 0 10px;
+  }
+  .deterministic-panel p:last-child{margin-bottom:0;}
+  .deterministic-panel b{color:var(--teal);}
+
+  .triage-strip{
+    margin-top:26px;
+    display:flex;
+    gap:14px;
+    background:white;
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:16px 18px;
+    flex-wrap:wrap;
+  }
+  .triage-item{
+    flex:1;
+    min-width:200px;
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    font-size:13.5px;
+    color:#46565d;
+    line-height:1.5;
+  }
+  .triage-item b{color:var(--ink);}
+  .t-icon{
+    width:22px;height:22px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:13px;font-weight:800;color:white;flex-shrink:0;margin-top:1px;
+  }
+  .t-icon.pass{background:var(--good);}
+  .t-icon.warn{background:var(--warn);}
+  .t-icon.fail{background:var(--bad);}
+
+  @media (max-width:700px){
+    .triage-strip{flex-direction:column;}
+  }
+
   /* SEARCH */
   .search{
     display:flex;
@@ -251,12 +328,21 @@
   <div class="hero">
     <span class="tag">Demo</span>
     <h1>V.a.a.S</h1>
-    <p>Verification as a Service — audit sustainability claims against verifiable evidence, instantly.</p>
+    <p>Verification as a Service — scale sustainability report audits by automatically checking every claim against authoritative sources, so your team can spend its time only on the claims that don't hold up.</p>
+
+    <button class="deterministic-btn" id="detBtn" onclick="toggleDeterministic()">
+      <span class="icon">i</span> What does "deterministic" verification mean?
+    </button>
+
+    <div class="deterministic-panel" id="detPanel">
+      <p><b>Deterministic verification</b> means the claim is checked against explicit, authoritative sources and fixed rules — not inferred or guessed. The same input always produces the same result, with traceable evidence, unlike probabilistic AI answers, which can vary between runs and offer no fixed evidentiary trail.</p>
+      <p>In practice, this means every claim is matched against <b>authoritative sources</b> — including datasets and registries such as <b>EDGAR, WMO, NASA</b> and other relevant scientific or regulatory bodies, as well as <b>regulation and their subsequent versions</b> (e.g. EU directives, delegated acts, and the standards derived from them) — rather than relying on a model's general knowledge.</p>
+    </div>
   </div>
 
   <div class="search">
-    <textarea id="input" placeholder="Paste a sustainability claim to audit..."></textarea>
-    <button class="btn-primary" id="auditBtn" onclick="run()">Audit this claim</button>
+    <textarea id="input" placeholder="Paste a claim from the report under audit..."></textarea>
+    <button class="btn-primary" id="auditBtn" onclick="run()">Verify this claim</button>
   </div>
 
   <div class="examples">
@@ -270,6 +356,21 @@
     <button class="chip" onclick="fill('air')">Air pollution materiality</button>
     <button class="chip" onclick="fill('measurement')">Measurement methods</button>
     <button class="chip" onclick="fill('scope1target')">Scope 1 target</button>
+  </div>
+
+  <div class="triage-strip">
+    <div class="triage-item">
+      <div class="t-icon pass">✓</div>
+      <div><b>Trusted claims</b> are cleared automatically — no auditor time spent.</div>
+    </div>
+    <div class="triage-item">
+      <div class="t-icon warn">!</div>
+      <div><b>Partly trusted claims</b> are flagged with the exact gap, so review is targeted, not blind.</div>
+    </div>
+    <div class="triage-item">
+      <div class="t-icon fail">×</div>
+      <div><b>Contested claims</b> surface straight to the top of your worklist for follow-up.</div>
+    </div>
   </div>
 
   <div id="result" class="result">
@@ -294,13 +395,13 @@
     <div class="section-label">Supporting evidence</div>
     <div id="proof"></div>
 
-    <div class="section-label">Improve validation</div>
+    <div class="section-label">Recommended auditor follow-up</div>
     <div id="improve" class="improve-box"></div>
 
   </div>
 
   <div class="cta">
-    <p>Want this running on your own ESG disclosures?</p>
+    <p>Want this scaling verification across your audit engagements?</p>
     <button class="btn-cta" onclick="bookPilot()">Discuss a pilot</button>
   </div>
 
@@ -524,11 +625,16 @@ var CLAIMS = [
 ];
 
 var OUTCOME_META = {
-  trusted: {label: "✅ Trusted", cls: "verdict-pass", contr: "0"},
-  partly:  {label: "⚠️ Partly trusted", cls: "verdict-warn", contr: "35"},
-  contested: {label: "❌ Contested", cls: "verdict-fail", contr: "100"},
+  trusted: {label: "✅ Trusted — no review needed", cls: "verdict-pass", contr: "0"},
+  partly:  {label: "⚠️ Partly trusted — targeted review", cls: "verdict-warn", contr: "35"},
+  contested: {label: "❌ Contested — priority follow-up", cls: "verdict-fail", contr: "100"},
   none: {label: "No matching rule", cls: "verdict-none", contr: "—"}
 };
+
+function toggleDeterministic(){
+  var panel = document.getElementById("detPanel");
+  panel.classList.toggle("show");
+}
 
 function fill(type){
   var examples = {
