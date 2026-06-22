@@ -1,44 +1,110 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>V.a.a.S</title>
+<meta charset="UTF-8">
+<title>V.a.a.S – Audit Verification</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body { font-family: Arial; background:#f6f9fb; margin:0; }
-.container { max-width:800px; margin:auto; padding:40px; text-align:center; }
-
-textarea {
-  width:100%;
-  padding:10px;
-  font-size:16px;
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f6f9fb;
 }
 
-button {
-  margin-top:10px;
-  padding:10px 20px;
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:40px 20px;
+}
+
+/* HERO */
+.hero{text-align:center;}
+.hero h1{font-size:60px;font-weight:900;}
+.hero p{font-size:18px;color:#444;margin-top:5px;}
+
+/* SEARCH */
+.search{
+  display:flex;
+  gap:10px;
+  margin-top:30px;
+  background:#fff;
+  padding:15px;
+  border-radius:15px;
+}
+textarea{
+  flex:1;
+  border:none;
+  font-size:18px;
+  outline:none;
+}
+
+/* BUTTON */
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:10px;
   background:#034459;
   color:white;
-  border:none;
   cursor:pointer;
 }
 
-.examples button {
-  background:#ddd;
-  color:black;
+/* EXAMPLES */
+.examples{text-align:center;margin-top:10px;}
+.examples button{
+  background:white;
+  color:#034459;
+  border:1px solid #ccc;
   margin:5px;
 }
 
-.result {
+/* RESULT */
+.result{
   display:none;
-  margin-top:20px;
   background:white;
-  padding:15px;
+  margin-top:30px;
+  padding:20px;
+  border-radius:15px;
 }
 
-.green{color:green;}
-.orange{color:orange;}
-.red{color:red;}
+/* TREE */
+.tree{width:70px;height:70px;}
+.green{fill:#16a34a;}
+.orange{fill:#f59e0b;}
+.red{fill:#ef4444;}
+
+/* METRICS */
+.metrics{
+  display:flex;
+  gap:10px;
+  margin-top:15px;
+}
+.card{
+  background:#f8fafc;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ddd;
+}
+
+/* PROOF */
+.proof{
+  background:#111;
+  color:white;
+  padding:12px;
+  border-radius:10px;
+  margin-top:10px;
+}
+.proof a{color:#60a5fa;}
+
+/* CTA */
+.cta{
+  text-align:center;
+  margin-top:40px;
+}
+.cta button{
+  background:#f59e0b;
+  font-weight:800;
+}
 </style>
 </head>
 
@@ -46,77 +112,147 @@ button {
 
 <div class="container">
 
+<div class="hero">
 <h1>V.a.a.S</h1>
-<p>Is your sustainability report supported by evidence?</p>
-  <button onclick="alert('JS works')">TEST JS</button>
-``
-
-<textarea id="input"></textarea>
-
-<br>
-<button onclick="run()">Audit this claim</button>
-
-<div class="examples">
-  <button onclick="fill('scope2')">Scope 2</button>
-  <button onclick="fill('366')">Emissions</button>
-  <button onclick="fill('waste')">Waste</button>
+<p>
+Is your sustainability report supported by evidence?<br>
+<b>How audit firms scale verification</b>
+</p>
 </div>
 
-<br>
-<button onclick="goDoc()">Test full report →</button>
+<div class="search">
+<textarea id="input" placeholder="Paste a claim..."></textarea>
+<button onclick="run()">Audit this claim</button>
+</div>
 
+<!-- CLAIM BUTTONS -->
+<div class="examples">
+<button onclick="setInput('scope 2 emissions method')">Scope 2</button>
+<button onclick="setInput('total emissions 366.683')">Emissions</button>
+<button onclick="setInput('waste hierarchy approach')">Waste</button>
+</div>
+
+<div style="text-align:center;margin-top:15px;">
+<button onclick="window.location.href='document-demo>
+</div>
+
+<!-- RESULT -->
 <div id="result" class="result">
-  <h2 id="verdict"></h2>
-  <p>Units: <span id="units"></span></p>
-  <p>Contradiction: <span id="contr"></span></p>
+
+<div style="display:flex;align-items:center;gap:10px;">
+<svg id="tree" class="tree green" viewBox="0 0 100 100">
+<circle cx="50" cy="20" r="12"/>
+<circle cx="35" cy="50" r="12"/>
+<circle cx="65" cy="50" r="12"/>
+<rect x="45" y="30" width="10" height="50"/>
+</svg>
+
+<h2 id="verdict"></h2>
+</div>
+
+<div class="metrics">
+<div class="card"><b>Units analysed</b><br><span id="units"></span></div>
+<div class="card"><b>Contradiction score</b><br><span id="contr"></span></div>
+</div>
+
+<div id="proof"></div>
+
+<div style="margin-top:15px;">
+<b>How to improve validation</b>
+<div id="improve"></div>
+</div>
+
+</div>
+
+<div class="cta">
+<p><b>Scale audit by focusing only on unsupported claims</b></p>
+<button onclick="window.open('https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2')">
+Discuss a pilot
+</button>
 </div>
 
 </div>
 
 <script>
 
-/* ✅ SIMPLE FILL */
-function fill(type){
-  if(type === "scope2") document.getElementById("input").value = "scope 2";
-  if(type === "366") document.getElementById("input").value = "366";
-  if(type === "waste") document.getElementById("input").value = "waste";
+function setInput(text){
+ document.getElementById("input").value=text;
 }
 
-/* ✅ SIMPLE NAVIGATION */
-function goDoc(){
-  alert("Opening document-demo.html");
-  window.location.href = "document-demo.html";
-}
-
-/* ✅ CORE FUNCTION */
 function run(){
 
-  var input = document.getElementById("input").value.toLowerCase();
+let text=document.getElementById("input").value.toLowerCase();
 
-  var verdict = "No rule";
-  var units = "1";
-  var contr = "0";
+let verdict, units, contr, proof, improve, color;
 
-  if(input.indexOf("scope 2") !== -1){
-    verdict = "Fully trusted";
-    units = "3";
-    contr = "0";
-  }
-  else if(input.indexOf("366") !== -1){
-    verdict = "Contradicted";
-    units = "2";
-    contr = "100";
-  }
-  else if(input.indexOf("waste") !== -1){
-    verdict = "Partial";
-    units = "1";
-    contr = "0";
-  }
+/* SCOPE 2 */
+if(text.includes("scope") && text.includes("2")){
+ verdict="Fully trusted";
+ units="3";
+ contr="0";
+ color="green";
 
-  document.getElementById("result").style.display = "block";
-  document.getElementById("verdict").innerText = verdict;
-  document.getElementById("units").innerText = units;
-  document.getElementById("contr").innerText = contr;
+ proof="<div class='proof'><b>GHG Protocol Scope 2 Guidance</b><br>" +
+ "<a href='https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidpen source</a><br>" +
+ "Chapter 6.2 (pp.44–45)<br>" +
+ "Chapter 6.11.3 (pp.56–57)" +
+ "</div>";
+
+ improve="No internal evidence required";
+}
+
+/* EMISSIONS */
+else if(text.includes("366") || text.includes("scope 1")){
+ verdict="Contradicted by internal report";
+ units="2";
+ contr="100";
+ color="red";
+
+ proof="<div class='proof'><b>Internal sustainability report (same document)</b><br>" +
+ "ESRS E1-6 – Page 64<br>" +
+ "Scope 1: 219.290<br>" +
+ "Scope 2: 140.375<br>" +
+ "Total ≠ 366.683" +
+ "</div>";
+
+ improve="Fix aggregation or correct reported number";
+}
+
+/* WASTE */
+else if(text.includes("waste")){
+ verdict="Directionally consistent – internal evidence required";
+ units="1";
+ contr="0";
+ color="orange";
+
+ proof="<div class='proof'><b>Directive 2008/98/EC</b><br>" +
+ "<a href='https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098' targetr>" +
+ "Article 4 – Waste hierarchy" +
+ "</div>";
+
+ improve="Provide internal waste policy proof";
+}
+
+/* DEFAULT */
+else{
+ verdict="No matching rule";
+ units="1";
+ contr="0";
+ color="orange";
+ proof="<div class='proof'>No structured evidence available</div>";
+ improve="Define verification logic";
+}
+
+/* RENDER */
+document.getElementById("result").style.display="block";
+document.getElementById("verdict").innerText=verdict;
+document.getElementById("units").innerText=units;
+document.getElementById("contr").innerText=contr+"/100";
+document.getElementById("proof").innerHTML=proof;
+document.getElementById("improve").innerText=improve;
+
+document.getElementById("tree").className="tree "+color;
+
 }
 
 </script>
