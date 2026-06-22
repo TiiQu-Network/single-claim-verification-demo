@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>V.a.a.S – Audit Verification</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
@@ -11,13 +10,11 @@ body{
   font-family:Arial;
   background:#f6f9fb;
 }
-
 .container{
   max-width:900px;
   margin:auto;
   padding:40px 20px;
 }
-
 .hero{text-align:center;}
 .hero h1{font-size:60px;font-weight:900;}
 .hero p{font-size:18px;color:#444;}
@@ -30,14 +27,12 @@ body{
   padding:15px;
   border-radius:15px;
 }
-
 textarea{
   flex:1;
   border:none;
   font-size:18px;
   outline:none;
 }
-
 button{
   padding:12px 20px;
   border:none;
@@ -47,16 +42,13 @@ button{
   cursor:pointer;
 }
 
-/* EXAMPLES */
+/* Examples */
 .examples{text-align:center;margin-top:10px;}
 .examples button{
-  background:white;
-  color:#034459;
-  border:1px solid #ccc;
-  margin:5px;
+  background:white;color:#034459;border:1px solid #ccc;margin:5px;
 }
 
-/* RESULT */
+/* Result */
 .result{
   display:none;
   background:white;
@@ -65,6 +57,7 @@ button{
   border-radius:15px;
 }
 
+/* Tree */
 .tree{width:70px;height:70px;}
 .green{fill:#16a34a;}
 .orange{fill:#f59e0b;}
@@ -83,11 +76,7 @@ button{
 }
 
 .proof{
-  background:#111;
-  color:white;
-  padding:12px;
-  border-radius:10px;
-  margin-top:10px;
+  background:#111;color:white;padding:12px;border-radius:10px;margin-top:10px;
 }
 .proof a{color:#60a5fa;}
 
@@ -106,35 +95,30 @@ button{
 <div class="container">
 
 <div class="hero">
-  <h1>V.a.a.S</h1>
-  <p>
-    Is your sustainability report supported by evidence?<br>
-    <b>How audit firms scale verification</b>
-  </p>
+<h1>V.a.a.S</h1>
+<p>
+Is your sustainability report supported by evidence?<br>
+<b>How audit firms scale verification</b>
+</p>
 </div>
 
 <div class="search">
-  <textarea id="input" placeholder="Paste a claim..."></textarea>
-  <button id="btn" onclick="run()">Audit this claim</button>
+<textarea id="input" placeholder="Paste a claim..."></textarea>
+<button onclick="run()">Audit this claim</button>
 </div>
 
-<!-- ✅ EXAMPLES -->
 <div class="examples">
-  <button onclick="setText('Market-based Scope 2 uses supplier contract emission factors.')">Scope 2</button>
-  <button onclick="setText('Total market-based Scope 1+2 emissions in 2023 were 366.683.')">Emissions</button>
-  <button onclick="setText('Waste-management approach is based on the EU Waste Framework Directive hierarchy.')">Waste</button>
+<button onclick="fill('scope2')">Scope 2</button>
+<button onclick="fill('emissions')">Emissions</button>
+<button onclick="fill('waste')">Waste</button>
 </div>
 
 <div style="text-align:center;margin-top:15px;">
-  document-demo.html
-    Test full report audit →
-  </button>
-</div>
+<button onclick="window.location.href='document-demo.html'v>
 
 <div id="result" class="result">
 
 <div style="display:flex;align-items:center;gap:10px;">
-
 <svg id="tree" class="tree green" viewBox="0 0 100 100">
 <circle cx="50" cy="20" r="12"/>
 <circle cx="35" cy="50" r="12"/>
@@ -143,12 +127,11 @@ button{
 </svg>
 
 <h2 id="verdict"></h2>
-
 </div>
 
 <div class="metrics">
-  <div class="card"><b>Units</b><br><span id="units"></span></div>
-  <div class="card"><b>Contradiction</b><br><span id="contr"></span></div>
+<div class="card"><b>Units</b><br><span id="units"></span></div>
+<div class="card"><b>Contradiction</b><br><span id="contr"></span></div>
 </div>
 
 <div id="proof"></div>
@@ -161,69 +144,100 @@ button{
 </div>
 
 <div class="cta">
-  <p><b>Scale audit by focusing only on unsupported claims</b></p>
-  <button onclick="window.open('https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2')">
-    Discuss a pilot
-  </button>
+<p><b>Scale audit by focusing only on unsupported claims</b></p>
+<button onclick="window.open('https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2')">
+Discuss a pilot
+</button>
 </div>
 
 </div>
 
 <script>
 
-function setText(t){
- document.getElementById("input").value=t;
+/* Example input fill */
+function fill(type){
+var input=document.getElementById("input");
+
+if(type=="scope2"){
+ input.value="Market-based Scope 2 uses supplier contract emission factors";
+}
+if(type=="emissions"){
+ input.value="Total market-based Scope 1+2 emissions in 2023 were 366.683";
+}
+if(type=="waste"){
+ input.value="Waste-management approach is based on EU Waste Directive";
+}
 }
 
+/* MAIN FUNCTION */
 function run(){
 
 var text=document.getElementById("input").value.toLowerCase();
 
-// ✅ normalize (important)
-text = text.replace(/-/g," ").replace("+"," ");
-
-var verdict="No matching rule";
-var units="1";
-var contr="0";
-var proof="<div class='proof'>No matching evidence</div>";
-var improve="Define verification logic";
+var verdict="";
+var units="";
+var contr="";
+var proof="";
+var improve="";
 var color="orange";
 
-/* ✅ MATCH LOGIC */
+/* Scope 2 */
 if(text.includes("scope 2")){
-  verdict="Fully trusted";
-  units="3";
-  contr="0";
-  color="green";
+ verdict="Fully trusted";
+ units="3";
+ contr="0";
+ color="green";
 
-  proof="<div class='proof'><b>GHG Protocol</b><br>https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf<br>Chapter 6.11.3 (pp.56–57)</div>";
+ proof="<div class='proof'><b>GHG Protocol</b><br>" +
+ "<a href='https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf'e</a><br>" +
+ "Chapter 6.11.3 (pp.56–57)" +
+ "</div>";
 
-  improve="No internal evidence required";
+ improve="No internal evidence required";
 }
 
+/* Emissions */
 else if(text.includes("366")){
-  verdict="Contradicted by internal report";
-  units="2";
-  contr="100";
-  color="red";
+ verdict="Contradicted by internal report";
+ units="2";
+ contr="100";
+ color="red";
 
-  proof="<div class='proof'><b>Internal report</b><br>ESRS E1‑6 page 64<br>219.290 + 140.375 ≠ 366.683</div>";
+ proof="<div class='proof'><b>Internal report</b><br>" +
+ "ESRS E1-6 page 64<br>" +
+ "219.290 + 140.375 ≠ 366.683" +
+ "</div>";
 
-  improve="Fix data inconsistency";
+ improve="Fix inconsistency";
 }
 
+/* Waste */
 else if(text.includes("waste")){
-  verdict="Directionally consistent – internal evidence required";
-  units="1";
-  contr="0";
-  color="orange";
+ verdict="Directionally consistent";
+ units="1";
+ contr="0";
+ color="orange";
 
-  proof="<div class='proof'><b>EU Directive</b><br>https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098<br>Article 4 – Waste hierarchy</div>";
+ proof="<div class='proof'><b>EU Directive</b><br>" +
+ "<a href='https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098'e</a><br>" +
+ "Article 4 – waste hierarchy" +
+ "</div>";
 
-  improve="Provide internal policy evidence";
+ improve="Provide internal policy";
 }
 
-/* ✅ DISPLAY */
+/* FALLBACK */
+else{
+ verdict="No rule found";
+ units="1";
+ contr="0";
+ color="orange";
+
+ proof="<div class='proof'>No matching structured evidence</div>";
+ improve="Define verification rule";
+}
+
+/* Render */
 document.getElementById("result").style.display="block";
 document.getElementById("verdict").innerText=verdict;
 document.getElementById("units").innerText=units;
@@ -232,8 +246,7 @@ document.getElementById("proof").innerHTML=proof;
 document.getElementById("improve").innerText=improve;
 
 var tree=document.getElementById("tree");
-tree.classList.remove("green","orange","red");
-tree.classList.add(color);
+tree.className="tree "+color;
 
 }
 
