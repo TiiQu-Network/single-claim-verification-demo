@@ -26,7 +26,7 @@ body{
 }
 .hero p{
   font-size:20px;
-  color:#555;
+  color:#444;
 }
 
 /* SEARCH */
@@ -47,29 +47,46 @@ textarea{
 }
 
 button{
-  padding:15px 20px;
+  padding:14px 20px;
   border:none;
   border-radius:12px;
   background:#034459;
   color:white;
-  cursor:pointer;
   font-weight:700;
+  cursor:pointer;
 }
-
 button:active{
   transform:scale(0.97);
+}
+
+/* EXAMPLES */
+.examples{
+  text-align:center;
+  margin-top:15px;
+}
+.examples button{
+  background:white;
+  color:#034459;
+  border:1px solid #cbd5e1;
+  margin:5px;
+}
+
+/* DOCUMENT BUTTON */
+.document{
+  text-align:center;
+  margin-top:20px;
 }
 
 /* RESULT */
 .result{
   display:none;
-  margin-top:30px;
+  margin-top:40px;
   background:white;
   padding:20px;
   border-radius:15px;
 }
 
-/* TREE */
+/* TREE ICON */
 .tree{
   width:70px;
   height:70px;
@@ -78,15 +95,31 @@ button:active{
 .orange{fill:#f59e0b;}
 .red{fill:#ef4444;}
 
+.verdict{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+/* PROOFS */
 .proof{
   background:#111;
   color:white;
-  padding:10px;
+  padding:12px;
   margin-top:10px;
   border-radius:10px;
 }
+.proof a{
+  color:#60a5fa;
+}
 
-a{color:#60a5fa;}
+/* IMPROVE */
+.improve{
+  background:#fff7ed;
+  padding:12px;
+  border-radius:10px;
+  margin-top:20px;
+}
 </style>
 </head>
 
@@ -96,35 +129,34 @@ a{color:#60a5fa;}
 
 <div class="hero">
   <h1>V.a.a.S</h1>
-  <p>Is your report supported by evidence?<br>
-  <b>Audit firms can scale verification here</b></p>
+  <p>
+    Is your sustainability report supported by evidence?<br>
+    <b>Audit firms can scale verification</b>
+  </p>
 </div>
 
 <div class="search">
-  <textarea id="input" placeholder="Paste a claim..."></textarea>
-  <button onclick="run()">Audit</button>
-</div>
-<!-- EXAMPLE CLAIMS -->
-<div style="text-align:center; margin-top:20px;">
-  <button onclick="document.getElementById('input').value='Market-based Scope 2 uses supplier contract emission factors where available.'">
-    Scope 2 methodology
-  </button>
-
-  <button onclick="document.getElementById('input').value='Total market-based Scope 1+2 emissions in 2023 were 366.683.'">
-    Scope 1+2 emissions
-  </button>
-
-  <button onclick="document.getElementById('input').value='Waste-management approach is based on the EU Waste Framework Directive hierarchy.'">
-    Waste hierarchy
-  </button>
+  <textarea id="input" placeholder="Paste a claim here..."></textarea>
+  <button id="btn" onclick="run()">Audit this claim</button>
 </div>
 
-<!-- FULL REPORT BUTTON -->
-<div style="text-align:center; margin-top:20px;">
-  <button 
-    onclick="window.location.href='document-demo.html'" 
-    style="background:#034459; color
+<!-- ✅ EXAMPLE BUTTONS -->
+<div class="examples">
+  <button onclick="fill(0)">Scope 2 methodology</button>
+  <button onclick="fill(1)">Scope 1+2 emissions</button>
+  <button onclick="fill(2)">Waste hierarchy</button>
+</div>
+
+<!-- ✅ FULL REPORT -->
+<div class="document">
+  <button onclick="windowAudit full report →
+  </button>
+</div>
+
+<!-- ✅ RESULT -->
 <div id="result" class="result">
+
+<div class="verdict">
 
 <svg id="tree" class="tree green" viewBox="0 0 100 100">
  <circle cx="50" cy="20" r="12"/>
@@ -133,19 +165,23 @@ a{color:#60a5fa;}
  <rect x="45" y="30" width="10" height="50"/>
 </svg>
 
-<h2 id="verdict"></h2>
+<h2 id="verdictText"></h2>
 
-<p><b>Units:</b> <span id="units"></span></p>
-<p><b>Contradiction:</b> <span id="contr"></span></p>
+</div>
+
+<p><b>Units analysed:</b> <span id="units"></span></p>
+<p><b>Contradiction score:</b> <span id="contr"></span></p>
 
 <div id="proofs"></div>
 
-<p><b>Improve validation:</b></p>
+<div class="improve">
+<b>How to improve validation:</b>
 <div id="improve"></div>
+</div>
 
 <br>
 <button onclick="window.open('https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2')">
-Discuss pilot
+Discuss a pilot
 </button>
 
 </div>
@@ -154,62 +190,109 @@ Discuss pilot
 
 <script>
 
-function run(){
+// ✅ DATASET
+const claims = [
 
-// ✅ ALWAYS runs (no condition blocking)
-
-const claim = document.getElementById("input").value.toLowerCase();
-
-// default values
-let verdict = "Externally aligned";
-let color = "orange";
-let units = 1;
-let contradiction = 0;
-let proof = `
+{
+text:"Market-based Scope 2 uses supplier contract emission factors where available under the GHG Protocol hierarchy.",
+verdict:"Fully trusted",
+color:"green",
+units:3,
+contr:0,
+proof:`
 <div class="proof">
-External reference<br>
-#View source</a>
-</div>`;
-let improve = "Add internal policy or report evidence";
+<b>GHG Protocol Scope 2 Guidance</b><br>
+<a href="https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf"e</a><br>
+Supplier-specific emission factors may be used (Chapter 6.11.3)
+</div>
+`,
+improve:"No internal evidence required"
+},
 
-// 🔥 logic
-if(claim.includes("scope 2")){
-  verdict="Fully trusted";
-  color="green";
-  units=3;
-  contradiction=0;
-  proof=`
-  <div class="proof">
-  GHG Protocol<br>
-  <a href="https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guid  Open source
-  </a><br>
-  Supplier-specific emission factors may be used
-  </div>`;
+{
+text:"Total market-based Scope 1+2 emissions in 2023 were 366.683.",
+verdict:"Contradicted by internal data",
+color:"red",
+units:2,
+contr:100,
+proof:`
+<div class="proof">
+<b>Internal report (same document)</b><br>
+Scope 1: 219.290 + Scope 2: 140.375 = 359.665 (not 366.683)
+</div>
+`,
+improve:"Fix calculation or reconcile reported values"
+},
+
+{
+text:"Waste-management approach is based on the EU Waste Framework Directive hierarchy.",
+verdict:"Directionally consistent – internal evidence required",
+color:"orange",
+units:1,
+contr:0,
+proof:`
+<div class="proof">
+<b>Directive 2008/98/EC – Article 4</b><br>
+<a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098ce</a><br>
+The waste hierarchy shall apply as a priority order
+</div>
+`,
+improve:"Add internal waste-management policy showing implementation"
 }
 
-if(claim.includes("366")){
-  verdict="Contradicted by report";
-  color="red";
-  units=2;
-  contradiction=100;
-  proof=`
-  <div class="proof">
-  Internal report (same document)<br>
-  Scope1 + Scope2 ≠ reported total
-  </div>`;
+];
+
+let current=null;
+
+// ✅ Fill example
+function fill(i){
+current=claims[i];
+document.getElementById("input").value=claims[i].text;
+}
+
+// ✅ MAIN FUNCTION
+function run(){
+
+const text=document.getElementById("input").value.toLowerCase();
+
+const btn=document.getElementById("btn");
+btn.innerText="Auditing...";
+btn.style.background="#64748b";
+
+// ✅ detect claim automatically
+if(text.includes("scope 2")) current=claims[0];
+else if(text.includes("366")) current=claims[1];
+else if(text.includes("waste")) current=claims[2];
+
+// ✅ fallback
+if(!current){
+current={
+verdict:"No matching verification rule",
+color:"orange",
+units:1,
+contr:0,
+proof:`<div class="proof">No structured evidence available</div>`,
+improve:"Define verification rules for this claim"
+};
 }
 
 // ✅ render
 document.getElementById("result").style.display="block";
-document.getElementById("verdict").innerText=verdict;
-document.getElementById("units").innerText=units;
-document.getElementById("contr").innerText=contradiction+"/100";
-document.getElementById("proofs").innerHTML=proof;
-document.getElementById("improve").innerText=improve;
+document.getElementById("verdictText").innerText=current.verdict;
+document.getElementById("units").innerText=current.units;
+document.getElementById("contr").innerText=current.contr+"/100";
+document.getElementById("proofs").innerHTML=current.proof;
+document.getElementById("improve").innerText=current.improve;
 
 let tree=document.getElementById("tree");
 tree.classList.remove("green","orange","red");
-tree.classList.add(color);
+tree.classList.add(current.color);
+
+// reset button
+setTimeout(()=>{
+btn.innerText="Audit this claim";
+btn.style.background="#034459";
+},600);
 
 }
 
