@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>V.a.a.S – Audit Verification</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f6f9fb;
+}
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:40px;
+}
+
+.hero{text-align:center;}
+.hero h1{font-size:60px;font-weight:900;}
+.hero p{color:#444;}
+
+.search{
+  display:flex;
+  gap:10px;
+  margin-top:30px;
+  background:white;
+  padding:15px;
+  border-radius:10px;
+}
+textarea{
+  flex:1;
+  font-size:16px;
+}
+button{
+  padding:10px 20px;
+  background:#034459;
+  color:white;
+  border:none;
+  cursor:pointer;
+}
+
+/* examples */
+.examples{
+  text-align:center;
+  margin-top:15px;
+}
+.examples button{
+  background:#eee;
+  color:black;
+  margin:5px;
+}
+
+/* result */
+.result{
+  display:none;
+  margin-top:30px;
+  background:white;
+  padding:20px;
+}
+
+/* cards */
+.card{
+  display:inline-block;
+  border:1px solid #ccc;
+  padding:10px;
+  margin:5px;
+}
+
+/* proof */
+.proof{
+  background:#111;
+  color:white;
+  padding:10px;
+  margin-top:10px;
+}
+.proof a{
+  color:#60a5fa;
+}
+
+/* CTA */
+.cta{
+  text-align:center;
+  margin-top:40px;
+}
+.cta button{
+  background:orange;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="hero">
+<h1>V.a.a.S</h1>
+<p>
+Is your sustainability report supported by evidence?<br>
+<b>How audit firms scale verification</b>
+</p>
+</div>
+
+<div class="search">
+<textarea id="input" placeholder="Paste a claim..."></textarea>
+<button onclick="run()">Audit this claim</button>
+</div>
+
+<div class="examples">
+<button onclick="fillScope()">Scope 2</button>
+<button onclick="fillEmissions()">Emissions</button>
+<button onclick="fillWaste()">Waste</button>
+</div>
+
+<div id="result" class="result">
+
+<h2 id="verdict"></h2>
+
+<div>
+<div class="card">Units: <span id="units"></span></div>
+<div class="card">Contradiction: <span id="contr"></span></div>
+</div>
+
+<div id="proof"></div>
+
+<p><b>Improve validation:</b></p>
+<div id="improve"></div>
+
+</div>
+
+<div class="cta">
+<p><b>Scale audit by focusing only on unsupported claims</b></p>
+<button onclick="window.open('https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2')">
+Discuss a pilot
+</button>
+</div>
+
+</div>
+
+<script>
+
+/* ✅ Examples */
+function fillScope(){
+  document.getElementById("input").value =
+  "Market-based Scope 2 uses supplier emission factors";
+}
+
+function fillEmissions(){
+  document.getElementById("input").value =
+  "Total market-based Scope 1+2 emissions in 2023 were 366.683";
+}
+
+function fillWaste(){
+  document.getElementById("input").value =
+  "Waste-management approach is based on EU Waste Directive";
+}
+
+/* ✅ MAIN */
+function run(){
+
+let text = document.getElementById("input").value.toLowerCase();
+
+let verdict="No matching rule";
+let units="1";
+let contr="0";
+let proof="<div class='proof'>No structured evidence</div>";
+let improve="Define verification rule";
+
+/* ✅ Scope 2 */
+if(text.includes("scope") && text.includes("2")){
+ verdict="Fully trusted";
+ units="3";
+
+ proof =
+ "<div class='proof'><b>GHG Protocol Scope 2</b><br>" +
+ "<a href='https://ghgprotocol.org/sites/default/files/2023-032%20Guidance.pdfOpen source</a><br>" +
+ "Chapter 6.2 (pp.44–45)<br>" +
+ "Chapter 6.11.3 (pp.56–57)" +
+ "</div>";
+
+ improve="Optional: include internal methodology";
+}
+
+/* ✅ Emissions */
+else if(text.includes("366")){
+ verdict="Contradicted by internal report";
+ units="2";
+ contr="100";
+
+ proof =
+ "<div class='proof'><b>Internal report</b><br>" +
+ "Page 64<br>" +
+ "219.290 + 140.375 ≠ 366.683" +
+ "</div>";
+
+ improve="Fix reported total";
+}
+
+/* ✅ Waste */
+else if(text.includes("waste")){
+ verdict="Directionally consistent";
+ units="1";
+
+ proof =
+ "<div class='proof'><b>EU Directive</b><br>" +
+ "<a href='https://eur-lex.europa.eu/legal-content/EN/TELEX:32008L0098<br>" +
+ "Article 4 – Waste hierarchy" +
+ "</div>";
+
+ improve="Add internal policy";
+}
+
+/* ✅ Render */
+document.getElementById("result").style.display="block";
+document.getElementById("verdict").innerText=verdict;
+document.getElementById("units").innerText=units;
+document.getElementById("contr").innerText=contr+"/100";
+document.getElementById("proof").innerHTML=proof;
+document.getElementById("improve").innerText=improve;
+
+}
+
+</script>
+
+</body>
+</html>
