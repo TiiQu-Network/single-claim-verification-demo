@@ -1,54 +1,262 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>VaaS Debug</title>
+<meta charset="UTF-8">
+<title>V.a.a.S – Audit Verification</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f6f9fb;
+}
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:40px 20px;
+}
+.hero{text-align:center;}
+.hero h1{font-size:60px;font-weight:900;}
+.hero p{font-size:18px;color:#444;}
+
+.search{
+  display:flex;
+  gap:10px;
+  margin-top:30px;
+  background:#fff;
+  padding:15px;
+  border-radius:15px;
+}
+textarea{
+  flex:1;
+  border:none;
+  font-size:18px;
+  outline:none;
+}
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:10px;
+  background:#034459;
+  color:white;
+  cursor:pointer;
+}
+
+/* Examples */
+.examples{
+  text-align:center;
+  margin-top:10px;
+}
+.examples button{
+  background:white;
+  color:#034459;
+  border:1px solid #ccc;
+  margin:5px;
+}
+
+/* Result */
+.result{
+  display:none;
+  background:white;
+  margin-top:30px;
+  padding:20px;
+  border-radius:15px;
+}
+
+/* Tree */
+.tree{width:70px;height:70px;}
+.green{fill:#16a34a;}
+.orange{fill:#f59e0b;}
+.red{fill:#ef4444;}
+
+/* Metrics */
+.metrics{
+  display:flex;
+  gap:10px;
+  margin-top:10px;
+}
+.card{
+  background:#f8fafc;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ddd;
+}
+
+/* Proof */
+.proof{
+  background:#111;
+  color:white;
+  padding:12px;
+  border-radius:10px;
+  margin-top:10px;
+}
+.proof a{
+  color:#60a5fa;
+}
+
+/* CTA */
+.cta{
+  text-align:center;
+  margin-top:40px;
+}
+.cta button{
+  background:#f59e0b;
+}
+</style>
 </head>
 
-<body style="font-family:Arial; text-align:center; padding:40px;">
+<body>
 
+<div class="container">
+
+<div class="hero">
 <h1>V.a.a.S</h1>
+<p>
+Is your sustainability report supported by evidence?<br>
+<b>How audit firms scale verification</b>
+</p>
+</div>
 
-<textarea id="input" style="width:80%; height:60px;"></textarea>
-
-<br><br>
-
+<div class="search">
+<textarea id="input" placeholder="Paste a claim..."></textarea>
 <button onclick="run()">Audit this claim</button>
+</div>
 
-<br><br>
+<div class="examples">
+<button onclick="fillScope()">Scope 2</button>
+<button onclick="fillEmissions()">Emissions</button>
+<button onclick="fillWaste()">Waste</button>
+</div>
 
-<button onclick="fill()">Fill example</button>
+<!-- RESULT -->
+<div id="result" class="result">
 
-<div id="result" style="margin-top:30px; display:none;">
-  <h2 id="verdict"></h2>
+<div style="display:flex;align-items:center;gap:10px;">
+<svg id="tree" class="tree green" viewBox="0 0 100 100">
+<circle cx="50" cy="20" r="12"/>
+<circle cx="35" cy="50" r="12"/>
+<circle cx="65" cy="50" r="12"/>
+<rect x="45" y="30" width="10" height="50"/>
+</svg>
+
+<h2 id="verdict"></h2>
+</div>
+
+<div class="metrics">
+<div class="card"><b>Units analysed</b><br><span id="units"></span></div>
+<div class="card"><b>Contradiction score</b><br><span id="contr"></span></div>
+</div>
+
+<div id="proof"></div>
+
+<div style="margin-top:15px;">
+<b>Improve validation</b>
+<div id="improve"></div>
+</div>
+
+</div>
+
+<div class="cta">
+<p><b>Scale audit by focusing only on unsupported claims</b></p>
+<button onclick="window.open('https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2')">
+Discuss a pilot
+</button>
+</div>
+
 </div>
 
 <script>
 
-/* DEBUG: proves JS loaded */
-alert("JS LOADED ✅");
-
-/* Fill example */
-function fill(){
-  document.getElementById("input").value = "scope 2";
+/* Example fillers */
+function fillScope(){
+ document.getElementById("input").value =
+ "Market-based Scope 2 uses supplier contract emission factors";
+}
+function fillEmissions(){
+ document.getElementById("input").value =
+ "Total market-based Scope 1+2 emissions in 2023 were 366.683";
+}
+function fillWaste(){
+ document.getElementById("input").value =
+ "Waste-management approach is based on the EU Waste Framework Directive hierarchy";
 }
 
-/* MAIN */
+/* MAIN FUNCTION */
 function run(){
 
-  alert("BUTTON CLICKED ✅");
+let text = document.getElementById("input").value.toLowerCase();
 
-  var text = document.getElementById("input").value.toLowerCase();
+let verdict="No matching rule";
+let units="1";
+let contr="0";
+let color="orange";
+let proof="<div class='proof'>No structured evidence found</div>";
+let improve="Define verification logic";
 
-  var verdict = "No match";
+/* ✅ Scope 2 */
+if(text.includes("scope") && text.includes("2")){
+ verdict="Fully trusted";
+ units="3";
+ contr="0";
+ color="green";
 
-  if(text.indexOf("scope") !== -1){
-    verdict = "Fully trusted";
-  }
+ proof =
+ "<div class='proof'><b>GHG Protocol Scope 2 Guidance</b><br>" +
+ "<a href='https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf' target='_blankbr><br>" +
+ "Verification units:<br>" +
+ "• Chapter 6.2 (pp. 44–45)<br>" +
+ "• Chapter 6.11.3 (pp. 56–57)<br>" +
+ "• Section 1.5.1 (p.10)" +
+ "</div>";
 
-  document.getElementById("result").style.display = "block";
-  document.getElementById("verdict").innerText = verdict;
+ improve="Optional: include internal Scope 2 methodology confirming application";
+}
 
-  alert("RESULT DISPLAYED ✅");
+/* ✅ Emissions */
+else if(text.includes("366")){
+ verdict="Contradicted by internal report";
+ units="2";
+ contr="100";
+ color="red";
+
+ proof =
+ "<div class='proof'><b>Internal sustainability report (same document)</b><br><br>" +
+ "ESRS E1-6 – Page 64<br>" +
+ "Scope 1: 219.290 | Scope 2: 140.375<br>" +
+ "Sum = 359.665<br>" +
+ "Reported total = 366.683 → mismatch" +
+ "</div>";
+
+ improve="Correct aggregation inconsistency in reported figure";
+}
+
+/* ✅ Waste */
+else if(text.includes("waste")){
+ verdict="Directionally consistent – internal evidence required";
+ units="1";
+ contr="0";
+ color="orange";
+
+ proof =
+ "<div class='proof'><b>Directive 2008/98/EC – Waste Framework Directive</b><br>" +
+ "<a href='https://eur-lex.europa.eu/legal-content/EN/TXT/?uri008L0098<br><br>" +
+ "Verification unit:<br>" +
+ "• Article 4 — Waste hierarchy<br>" +
+ "• Priority order: prevention → reuse → recycling → recovery → disposal" +
+ "</div>";
+
+ improve="Provide internal waste policy demonstrating implementation of hierarchy";
+}
+
+/* ✅ RENDER */
+document.getElementById("result").style.display="block";
+document.getElementById("verdict").innerText=verdict;
+document.getElementById("units").innerText=units;
+document.getElementById("contr").innerText=contr+"/100";
+document.getElementById("proof").innerHTML=proof;
+document.getElementById("improve").innerText=improve;
+
+document.getElementById("tree").className="tree "+color;
 
 }
 
@@ -56,4 +264,3 @@ function run(){
 
 </body>
 </html>
-``
