@@ -130,6 +130,14 @@
   .result.show{display:block;animation:fadeIn .25s ease;}
   @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
 
+  .claim-echo{
+    font-size:13px;
+    color:#7a8a91;
+    margin-bottom:10px;
+    font-weight:600;
+  }
+  .claim-echo span{color:var(--ink);font-weight:700;}
+
   .verdict-row{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
   #verdict{font-size:24px;font-weight:800;margin:0;}
   .verdict-pass{color:var(--good);}
@@ -158,7 +166,8 @@
     margin:22px 0 8px;
   }
 
-  .proof{
+  /* EVIDENCE CARD */
+  .evidence-card{
     background:#0c1b22;
     color:#dce7ea;
     padding:18px 20px;
@@ -166,10 +175,42 @@
     font-size:14.5px;
     line-height:1.6;
   }
-  .proof b{color:#fff;}
-  .proof a{color:#5ec2e8;text-decoration:none;border-bottom:1px solid rgba(94,194,232,.4);}
-  .proof a:hover{border-bottom-color:#5ec2e8;}
-  .proof .ref{color:#9fb3ba;font-family:var(--mono);font-size:13px;}
+  .evidence-card + .evidence-card{margin-top:12px;}
+  .evidence-card b{color:#fff;}
+  .evidence-card a{color:#5ec2e8;text-decoration:none;border-bottom:1px solid rgba(94,194,232,.4);word-break:break-word;}
+  .evidence-card a:hover{border-bottom-color:#5ec2e8;}
+  .evidence-card .ref{color:#9fb3ba;font-family:var(--mono);font-size:13px;}
+  .evidence-card .row{margin-bottom:6px;}
+  .evidence-card .row .lbl{
+    display:inline-block;
+    min-width:108px;
+    color:#7f97a0;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    font-weight:700;
+    vertical-align:top;
+  }
+  .evidence-card .why{
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px solid rgba(255,255,255,.08);
+    color:#c7d6da;
+  }
+  .evidence-card .notes{
+    margin-top:8px;
+    color:#9fb3ba;
+    font-size:13.5px;
+    font-style:italic;
+  }
+  .no-evidence{
+    background:#fbfdfe;
+    border:1px dashed var(--line);
+    color:#6b7c83;
+    padding:16px 18px;
+    border-radius:14px;
+    font-size:14.5px;
+  }
 
   .improve-box{
     background:#fff8ec;
@@ -198,6 +239,7 @@
     .hero h1{font-size:40px;}
     .search{flex-direction:column;}
     .btn-primary{width:100%;}
+    .evidence-card .row .lbl{min-width:auto;display:block;margin-bottom:2px;}
   }
 </style>
 </head>
@@ -222,9 +264,17 @@
     <button class="chip" onclick="fill('scope2')">Scope 2 methodology</button>
     <button class="chip" onclick="fill('emissions')">Emissions total</button>
     <button class="chip" onclick="fill('waste')">Waste hierarchy</button>
+    <button class="chip" onclick="fill('nuclear')">Nuclear energy share</button>
+    <button class="chip" onclick="fill('prtr')">PRTR disclosure</button>
+    <button class="chip" onclick="fill('ecocasting')">ecoCasting waste reduction</button>
+    <button class="chip" onclick="fill('air')">Air pollution materiality</button>
+    <button class="chip" onclick="fill('measurement')">Measurement methods</button>
+    <button class="chip" onclick="fill('scope1target')">Scope 1 target</button>
   </div>
 
   <div id="result" class="result">
+
+    <div class="claim-echo" id="claimEcho" style="display:none;"></div>
 
     <div class="verdict-row">
       <h2 id="verdict"></h2>
@@ -242,7 +292,7 @@
     </div>
 
     <div class="section-label">Supporting evidence</div>
-    <div id="proof" class="proof"></div>
+    <div id="proof"></div>
 
     <div class="section-label">Improve validation</div>
     <div id="improve" class="improve-box"></div>
@@ -258,11 +308,239 @@
 
 <script>
 
+/* -------------------------------------------------------------
+   CLAIMS DATASET
+   Each claim can carry one or more evidence sources (external
+   and/or internal). Each source has: name, url (optional),
+   section (the exact locator), and a short note on what it shows.
+------------------------------------------------------------- */
+
+var CLAIMS = [
+  {
+    id: 16,
+    keywords: ["scope 1 reduction", "5%", "by 2025", "scope1target", "reduction target of 5"],
+    claimText: "Scope 1 reduction target of 5% by 2025",
+    outcome: "partly",
+    why: "The report clearly indicates Fritz Winter is presenting a 2025 short-term reduction target, but no independent external dataset was found confirming this exact figure.",
+    notes: "No external source available for this claim.",
+    sources: [
+      {
+        type: "Internal",
+        name: "Fritz Winter — Nachhaltigkeitsbericht 2024",
+        url: null,
+        section: "Section 2.8 \"Umweltdaten\", p. 65"
+      }
+    ],
+    suggestion: "Add an independent, third-party verified emissions baseline or audited reduction-tracking dataset that can corroborate the 5%-by-2025 target year over year."
+  },
+  {
+    id: 75,
+    keywords: ["waste hierarchy", "waste management", "waste-management approach", "waste"],
+    claimText: "Waste-management approach is based on the EU Waste Framework Directive hierarchy",
+    outcome: "partly",
+    why: "Article 4 of the Directive is the authoritative source for the waste hierarchy, and the report appears to reference it — but the Directive only defines the hierarchy; it does not independently prove that Fritz Winter's actual practice follows it.",
+    notes: "Directionally consistent with the source, but not independently confirmed by it.",
+    sources: [
+      {
+        type: "External",
+        name: "Directive 2008/98/EC — EU Waste Framework Directive",
+        url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098",
+        section: "Article 4 — Waste hierarchy, §4(1)"
+      }
+    ],
+    suggestion: "Provide internal policy documentation or audited waste-flow records demonstrating the hierarchy is implemented in practice, not just referenced."
+  },
+  {
+    id: 143,
+    keywords: ["nuclear", "nuclear generation", "nuclear sources", "electricity/heat/cooling"],
+    claimText: "Nuclear sources derive from electricity/heat/cooling from nuclear generation",
+    outcome: "trusted",
+    why: "The report's definition of nuclear-source energy is consistent with the ESRS E1-5 interpretation: nuclear-source energy is reported through the share of purchased or acquired electricity/heat/steam/cooling that comes from nuclear generation. The external source supports the meaning of the methodology statement.",
+    notes: "EFRAG ESRS Q&A Platform, Explanations 1/2024, p. 16 of 24, explains undertakings should report final energy consumption using their energy mix, including nuclear-generated electricity, heat, steam, and cooling shares.",
+    sources: [
+      {
+        type: "External",
+        name: "ESRS E1-5 — Delegated Act (Commission Delegated Regulation (EU) 2023/2772)",
+        url: "https://www.efrag.org/en/projects/esrs-set1/esrs-e1-climate-change",
+        section: "ESRS E1, paragraph 37(b) — disclosure of \"total energy consumption from nuclear sources\", p. 30 of the delegated-act PDF"
+      }
+    ],
+    suggestion: "Already trusted at the methodology level. To strengthen further, attach the EFRAG ESRS Q&A Explanations 1/2024 (p. 16) directly as a secondary corroborating reference."
+  },
+  {
+    id: 57,
+    keywords: ["366", "366.683", "scope 1+2", "total market-based", "emissions total"],
+    claimText: "Total market-based Scope 1+2 emissions in 2023 were 366.683",
+    outcome: "contested",
+    why: "The reported combined figure is 366.683, but the two component rows on the same page sum to 359.665 (219.290 + 140.375), not 366.683 — contradicted by the report's own component data. Note: 366.683 + 243.173 = 609.856 matches a separate total market-based GHG emissions line, suggesting the table is internally ambiguous, but the component rows are the stronger check for a direct Scope 1+2 verification.",
+    notes: "Scope 1 (2023): 219.290 · Market-based Scope 2 (2023): 140.375.",
+    sources: [
+      {
+        type: "Internal",
+        name: "Fritz Winter — ESRS E1-6, Brutto-THG-Emissionen",
+        url: null,
+        section: "Page 64 — Scope 1 and market-based Scope 2 component rows, 2023"
+      }
+    ],
+    suggestion: "Reconcile the component rows and the stated total in a single restated table, and add an external assurance statement (e.g. limited/reasonable assurance opinion) covering the GHG inventory."
+  },
+  {
+    id: 82,
+    keywords: ["prtr", "supervisory authority", "competent authority", "prtr disclosures"],
+    claimText: "PRTR disclosures are made to the supervisory authority",
+    outcome: "partly",
+    why: "The regulation clearly establishes that covered operators must submit PRTR information to the competent authority, so the claim is directionally consistent with the legal framework. But the regulation does not independently prove Fritz Winter actually made the disclosures for the relevant reporting year — it proves the obligation and route, not the completed filing.",
+    notes: null,
+    sources: [
+      {
+        type: "External",
+        name: "Regulation (EC) No 166/2006 — E-PRTR Regulation",
+        url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32006R0166",
+        section: "Article 5 — Reporting by operators, pp. 3–4: operators \"shall report the amounts annually to its competent authority\""
+      },
+      {
+        type: "External",
+        name: "Regulation (EC) No 166/2006 — E-PRTR Regulation",
+        url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32006R0166",
+        section: "Article 7 — Reporting by Member States, p. 5"
+      }
+    ],
+    suggestion: "Add the facility's actual PRTR filing confirmation or competent-authority receipt for the relevant reporting year to move this from \"obligation exists\" to \"filing confirmed\"."
+  },
+  {
+    id: 89,
+    keywords: ["supplier contract", "market-based scope 2", "emission factors", "ghg protocol hierarchy", "scope2"],
+    claimText: "Market-based Scope 2 uses supplier contract emission factors where available under the GHG Protocol hierarchy",
+    outcome: "trusted",
+    why: "Fritz Winter's statement matches the GHG Protocol logic closely: use contractual/supplier data for the market-based method where available, and otherwise use other eligible hierarchy data. The report's reference to energy-contract factors plus fallback databases is consistent with the external methodology source. This verifies the method statement, though not every individual factor choice in the company's calculation.",
+    notes: null,
+    sources: [
+      {
+        type: "External",
+        name: "GHG Protocol Scope 2 Guidance",
+        url: "https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf",
+        section: "Chapter 6.2 — \"Determine whether the market-based method applies\", pp. 44–45"
+      },
+      {
+        type: "External",
+        name: "GHG Protocol Scope 2 Guidance",
+        url: "https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf",
+        section: "Chapter 6.11.3 — \"Supplier-specific emission rate\", pp. 56–57"
+      },
+      {
+        type: "External",
+        name: "GHG Protocol Scope 2 Guidance",
+        url: "https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf",
+        section: "Section 1.5.1, p. 10 — hierarchy of emission factors statement"
+      }
+    ],
+    suggestion: "Trusted at the method-statement level. To verify the calculation itself, request the underlying supplier contracts and the specific emission-factor figures applied per contract."
+  },
+  {
+    id: 100,
+    keywords: ["ecocasting", "green-sand", "22%", "green sand waste"],
+    claimText: "ecoCasting reduces green-sand waste by 22% per year",
+    outcome: "partly",
+    why: "The report makes a specific quantified claim of 22% less green-sand waste per year, but the regulatory truth source only confirms the direction of effect — a better waste balance from avoiding mixing core sands with green sand — not the precise 22% figure.",
+    notes: "Logic is trusted; figure is not validated by the external source.",
+    sources: [
+      {
+        type: "External",
+        name: "RP Gießen — Genehmigungsbescheid (permit decision)",
+        url: "https://rp-giessen.hessen.de/sites/rp-giessen.hessen.de/files/2022-06/genehmigungsbescheid_-_geschwaerzt_barrierefrei3.pdf",
+        section: "\"Abfall: Sonstige öffentlich-rechtliche Vorschriften\", p. 37"
+      }
+    ],
+    suggestion: "Add a metering or measurement record (e.g. annual sand-recovery tonnage data) that independently substantiates the specific 22% reduction figure."
+  },
+  {
+    id: 104,
+    keywords: ["air pollution material topic", "air pollution is a material topic"],
+    claimText: "Air pollution is a material topic under ESRS E2",
+    outcome: "partly",
+    why: "Consistent with ESRS E2, but not independently confirmed by it — materiality is a company-specific judgment disclosed by Fritz Winter, not something the standard itself certifies for any one company.",
+    notes: null,
+    sources: [],
+    suggestion: "See claim 56 below for the matching ESRS E2 source; add Fritz Winter's own double-materiality assessment workpapers to substantiate the company-specific judgment."
+  },
+  {
+    id: 56,
+    keywords: ["air pollution", "esrs e2", "pollution of air", "air"],
+    claimText: "Air pollution is a material topic under ESRS E2",
+    outcome: "partly",
+    why: "The ESRS source clearly supports that air pollution is a sub-topic within ESRS E2 and part of the E2 materiality assessment. But ESRS E2 does not independently prove that Fritz Winter correctly determined air pollution to be material for itself; that remains a company-specific judgment disclosed in the report.",
+    notes: "Consistent with ESRS E2, but not independently confirmed by it.",
+    sources: [
+      {
+        type: "External",
+        name: "ESRS E2 — Pollution (Commission Delegated Regulation (EU) 2023/2772, Annex I)",
+        url: "https://www.efrag.org/sites/default/files/sites/webpublishing/SiteAssets/ESRS%20E2%20Delegated-act-2023-5303-annex-1_en.pdf",
+        section: "Objective, paragraphs 1–3, p. 2 — defines \"pollution of air\" as emissions into air plus their prevention, control and reduction"
+      },
+      {
+        type: "External",
+        name: "ESRS E2 — Pollution (Commission Delegated Regulation (EU) 2023/2772, Annex I)",
+        url: "https://www.efrag.org/sites/default/files/sites/webpublishing/SiteAssets/ESRS%20E2%20Delegated-act-2023-5303-annex-1_en.pdf",
+        section: "Application Requirement AR 4, p. 7 — air, water and soil pollution as sub-topics of the materiality assessment"
+      }
+    ],
+    suggestion: "Add Fritz Winter's double-materiality assessment documentation to confirm the company-specific determination, since ESRS E2 only confirms the topic's eligibility, not the company's judgment."
+  },
+  {
+    id: 62,
+    keywords: ["measurement methods", "legally prescribed", "measurement"],
+    claimText: "Measurement methods are legally prescribed",
+    outcome: "trusted",
+    why: "The regulation clearly requires a legally defined methodological framework for PRTR reporting and obliges operators to specify whether reported values are based on measurement, calculation, or estimation, using internationally approved methodologies where available.",
+    notes: null,
+    sources: [
+      {
+        type: "External",
+        name: "Regulation (EC) No 166/2006 — E-PRTR Regulation",
+        url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32006R0166",
+        section: "Article 5(1), pp. 5–6 — operators report annually and indicate measurement, calculation, or estimation basis"
+      },
+      {
+        type: "External",
+        name: "Regulation (EC) No 166/2006 — E-PRTR Regulation",
+        url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32006R0166",
+        section: "Article 5(4), p. 6 — best available information: monitoring data, emission factors, mass-balance equations, engineering judgment, etc."
+      },
+      {
+        type: "External",
+        name: "Regulation (EC) No 166/2006 — E-PRTR Regulation",
+        url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32006R0166",
+        section: "Article 5(5), p. 6 — operators must keep records describing the methodology used"
+      },
+      {
+        type: "External",
+        name: "Regulation (EC) No 166/2006 — E-PRTR Regulation",
+        url: "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32006R0166",
+        section: "Article 9(4), p. 7 — Commission may adopt guidelines consistent with internationally approved methodologies"
+      }
+    ],
+    suggestion: "Trusted at the legal-framework level. Add the facility's own monitoring methodology record (per Article 5(5)) to confirm the specific method actually applied."
+  }
+];
+
+var OUTCOME_META = {
+  trusted: {label: "✅ Trusted", cls: "verdict-pass", contr: "0"},
+  partly:  {label: "⚠️ Partly trusted", cls: "verdict-warn", contr: "35"},
+  contested: {label: "❌ Contested", cls: "verdict-fail", contr: "100"},
+  none: {label: "No matching rule", cls: "verdict-none", contr: "—"}
+};
+
 function fill(type){
   var examples = {
-    scope2: "Scope 2 emissions methodology",
-    emissions: "Total emissions 366.683",
-    waste: "Waste hierarchy approach"
+    scope2: "Market-based Scope 2 uses supplier contract emission factors",
+    emissions: "Total market-based Scope 1+2 emissions in 2023 were 366.683",
+    waste: "Waste-management approach is based on the EU Waste Framework Directive hierarchy",
+    nuclear: "Nuclear sources derive from electricity/heat/cooling from nuclear generation",
+    prtr: "PRTR disclosures are made to the supervisory authority",
+    ecocasting: "ecoCasting reduces green-sand waste by 22% per year",
+    air: "Air pollution is a material topic under ESRS E2",
+    measurement: "Measurement methods are legally prescribed",
+    scope1target: "Scope 1 reduction target of 5% by 2025"
   };
   document.getElementById("input").value = examples[type] || "";
   document.getElementById("input").focus();
@@ -280,88 +558,116 @@ function setVerdictClass(el, type){
   el.classList.add(type);
 }
 
-function run(){
+function escapeHtml(str){
+  if(!str) return "";
+  return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
 
+function findMatch(text){
+  var best = null;
+  var bestScore = 0;
+  for(var i=0;i<CLAIMS.length;i++){
+    var c = CLAIMS[i];
+    var score = 0;
+    for(var j=0;j<c.keywords.length;j++){
+      if(text.indexOf(c.keywords[j]) !== -1){
+        score += c.keywords[j].length; // longer/more specific keyword wins
+      }
+    }
+    if(score > bestScore){
+      bestScore = score;
+      best = c;
+    }
+  }
+  return best;
+}
+
+function renderEvidenceCard(src){
+  var html = "<div class='evidence-card'>";
+  html += "<div class='row'><span class='lbl'>Source type</span>" + escapeHtml(src.type) + "</div>";
+  html += "<div class='row'><span class='lbl'>Source</span><b>" + escapeHtml(src.name) + "</b></div>";
+  if(src.url){
+    html += "<div class='row'><span class='lbl'>URL</span><a href='" + src.url + "' target='_blank' rel='noopener'>" + src.url + " ↗</a></div>";
+  } else {
+    html += "<div class='row'><span class='lbl'>URL</span><span class='ref'>n/a — internal document, not publicly published</span></div>";
+  }
+  html += "<div class='row'><span class='lbl'>Locator</span><span class='ref'>" + escapeHtml(src.section) + "</span></div>";
+  html += "</div>";
+  return html;
+}
+
+function renderResult(claim){
+  var meta = OUTCOME_META[claim.outcome];
+  var verdictEl = document.getElementById("verdict");
+  setVerdictClass(verdictEl, meta.cls);
+  verdictEl.innerText = meta.label;
+
+  document.getElementById("units").innerText = claim.sources.length ? String(claim.sources.length) : "0";
+  document.getElementById("contr").innerText = meta.contr + " / 100";
+
+  var echo = document.getElementById("claimEcho");
+  echo.style.display = "block";
+  echo.innerHTML = "Claim #" + claim.id + ": <span>" + escapeHtml(claim.claimText) + "</span>";
+
+  var proofHtml = "";
+  if(claim.sources.length === 0){
+    proofHtml += "<div class='no-evidence'>No independent source document is attached to this specific claim. See the suggestion below.</div>";
+  } else {
+    for(var i=0;i<claim.sources.length;i++){
+      proofHtml += renderEvidenceCard(claim.sources[i]);
+    }
+  }
+  proofHtml += "<div class='evidence-card' style='margin-top:12px;'><div class='why'>" + escapeHtml(claim.why) + "</div>";
+  if(claim.notes){
+    proofHtml += "<div class='notes'>" + escapeHtml(claim.notes) + "</div>";
+  }
+  proofHtml += "</div>";
+
+  document.getElementById("proof").innerHTML = proofHtml;
+  document.getElementById("improve").innerText = claim.suggestion;
+  document.getElementById("result").classList.add("show");
+}
+
+function renderEmpty(){
+  var verdictEl = document.getElementById("verdict");
+  verdictEl.innerText = "Enter a claim to audit";
+  setVerdictClass(verdictEl, 'verdict-none');
+  document.getElementById("claimEcho").style.display = "none";
+  document.getElementById("units").innerText = "—";
+  document.getElementById("contr").innerText = "—";
+  document.getElementById("proof").innerHTML = "<div class='no-evidence'>No claim provided yet.</div>";
+  document.getElementById("improve").innerText = "Paste a claim above, or try one of the examples.";
+  document.getElementById("result").classList.add("show");
+}
+
+function renderNoMatch(){
+  var verdictEl = document.getElementById("verdict");
+  setVerdictClass(verdictEl, 'verdict-none');
+  verdictEl.innerText = OUTCOME_META.none.label;
+  document.getElementById("claimEcho").style.display = "none";
+  document.getElementById("units").innerText = "0";
+  document.getElementById("contr").innerText = "—";
+  document.getElementById("proof").innerHTML = "<div class='no-evidence'>No structured evidence found for this claim in the demo dataset.</div>";
+  document.getElementById("improve").innerText = "Define verification logic and attach a candidate source for this claim type.";
+  document.getElementById("result").classList.add("show");
+}
+
+function run(){
   var raw = document.getElementById("input").value;
   var text = raw.toLowerCase().trim();
 
-  var verdictEl = document.getElementById("verdict");
-
   if(!text){
-    verdictEl.innerText = "Enter a claim to audit";
-    setVerdictClass(verdictEl, 'verdict-none');
-    document.getElementById("units").innerText = "—";
-    document.getElementById("contr").innerText = "—";
-    document.getElementById("proof").innerHTML = "No claim provided yet.";
-    document.getElementById("improve").innerText = "Paste a claim above, or try one of the examples.";
-    document.getElementById("result").classList.add("show");
+    renderEmpty();
     return;
   }
 
-  var verdict = "No matching rule";
-  var verdictClass = "verdict-none";
-  var units = "1";
-  var contr = "0";
-  var proof = "<div>No structured evidence found for this claim in the demo dataset.</div>";
-  var improve = "Define verification logic for this claim type.";
-
-  /* Scope 2 */
-  if(text.indexOf("scope") !== -1 && text.indexOf("2") !== -1){
-
-    verdict = "✅ Fully trusted";
-    verdictClass = "verdict-pass";
-    units = "3";
-    contr = "0";
-
-    proof =
-      "<b>GHG Protocol Scope 2 Guidance</b><br>" +
-      "<a href='https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf' target='_blank' rel='noopener'>View source document ↗</a><br><br>" +
-      "<span class='ref'>Chapter 6.2 — pp. 44–45</span><br>" +
-      "<span class='ref'>Chapter 6.11.3 — pp. 56–57</span>";
-
-    improve = "Optional: attach internal methodology document confirming application.";
+  var match = findMatch(text);
+  if(!match){
+    renderNoMatch();
+    return;
   }
 
-  /* Emissions */
-  else if(text.indexOf("366") !== -1){
-
-    verdict = "❌ Contradicted";
-    verdictClass = "verdict-fail";
-    units = "2";
-    contr = "100";
-
-    proof =
-      "<b>Internal report — ESRS E1-6</b><br>" +
-      "<span class='ref'>Page 64</span><br><br>" +
-      "Reported components do not sum to the stated total:<br>" +
-      "<span class='ref'>219.290 + 140.375 ≠ 366.683</span>";
-
-    improve = "Fix the inconsistency between component figures and the reported total.";
-  }
-
-  /* Waste */
-  else if(text.indexOf("waste") !== -1){
-
-    verdict = "⚠️ Partial alignment";
-    verdictClass = "verdict-warn";
-    units = "1";
-    contr = "0";
-
-    proof =
-      "<b>EU Directive 2008/98/EC</b><br>" +
-      "<a href='https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098' target='_blank' rel='noopener'>View source document ↗</a><br><br>" +
-      "<span class='ref'>Article 4 — Waste hierarchy</span>";
-
-    improve = "Provide internal policy documentation demonstrating implementation.";
-  }
-
-  setVerdictClass(verdictEl, verdictClass);
-  verdictEl.innerText = verdict;
-  document.getElementById("units").innerText = units;
-  document.getElementById("contr").innerText = contr + " / 100";
-  document.getElementById("proof").innerHTML = proof;
-  document.getElementById("improve").innerText = improve;
-  document.getElementById("result").classList.add("show");
+  renderResult(match);
 }
 
 document.getElementById("input").addEventListener("keydown", function(e){
