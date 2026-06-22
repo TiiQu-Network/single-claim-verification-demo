@@ -3,7 +3,6 @@
 <head>
 <meta charset="UTF-8">
 <title>V.a.a.S – Audit Verification</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
@@ -11,19 +10,15 @@ body{
   font-family:Arial;
   background:#f6f9fb;
 }
-
 .container{
   max-width:900px;
   margin:auto;
   padding:40px 20px;
 }
-
-/* HERO */
 .hero{text-align:center;}
 .hero h1{font-size:60px;font-weight:900;}
-.hero p{font-size:18px;color:#444;margin-top:5px;}
+.hero p{font-size:18px;color:#444;}
 
-/* SEARCH */
 .search{
   display:flex;
   gap:10px;
@@ -38,8 +33,6 @@ textarea{
   font-size:18px;
   outline:none;
 }
-
-/* BUTTON */
 button{
   padding:12px 20px;
   border:none;
@@ -49,16 +42,13 @@ button{
   cursor:pointer;
 }
 
-/* EXAMPLES */
+/* Examples */
 .examples{text-align:center;margin-top:10px;}
 .examples button{
-  background:white;
-  color:#034459;
-  border:1px solid #ccc;
-  margin:5px;
+  background:white;color:#034459;border:1px solid #ccc;margin:5px;
 }
 
-/* RESULT */
+/* Result */
 .result{
   display:none;
   background:white;
@@ -67,17 +57,16 @@ button{
   border-radius:15px;
 }
 
-/* TREE */
+/* Tree */
 .tree{width:70px;height:70px;}
 .green{fill:#16a34a;}
 .orange{fill:#f59e0b;}
 .red{fill:#ef4444;}
 
-/* METRICS */
 .metrics{
   display:flex;
   gap:10px;
-  margin-top:15px;
+  margin-top:10px;
 }
 .card{
   background:#f8fafc;
@@ -86,24 +75,17 @@ button{
   border:1px solid #ddd;
 }
 
-/* PROOF */
 .proof{
-  background:#111;
-  color:white;
-  padding:12px;
-  border-radius:10px;
-  margin-top:10px;
+  background:#111;color:white;padding:12px;border-radius:10px;margin-top:10px;
 }
 .proof a{color:#60a5fa;}
 
-/* CTA */
 .cta{
   text-align:center;
   margin-top:40px;
 }
 .cta button{
   background:#f59e0b;
-  font-weight:800;
 }
 </style>
 </head>
@@ -125,18 +107,18 @@ Is your sustainability report supported by evidence?<br>
 <button onclick="run()">Audit this claim</button>
 </div>
 
-<!-- CLAIM BUTTONS -->
 <div class="examples">
-<button onclick="setInput('scope 2 emissions method')">Scope 2</button>
-<button onclick="setInput('total emissions 366.683')">Emissions</button>
-<button onclick="setInput('waste hierarchy approach')">Waste</button>
+<button onclick="fill('scope2')">Scope 2</button>
+<button onclick="fill('emissions')">Emissions</button>
+<button onclick="fill('waste')">Waste</button>
 </div>
 
 <div style="text-align:center;margin-top:15px;">
-<button onclick="window.location.href='document-demo>
+document-demo.html
+Test full report audit →
+</button>
 </div>
 
-<!-- RESULT -->
 <div id="result" class="result">
 
 <div style="display:flex;align-items:center;gap:10px;">
@@ -151,14 +133,14 @@ Is your sustainability report supported by evidence?<br>
 </div>
 
 <div class="metrics">
-<div class="card"><b>Units analysed</b><br><span id="units"></span></div>
-<div class="card"><b>Contradiction score</b><br><span id="contr"></span></div>
+<div class="card"><b>Units</b><br><span id="units"></span></div>
+<div class="card"><b>Contradiction</b><br><span id="contr"></span></div>
 </div>
 
 <div id="proof"></div>
 
 <div style="margin-top:15px;">
-<b>How to improve validation</b>
+<b>Improve validation</b>
 <div id="improve"></div>
 </div>
 
@@ -175,75 +157,90 @@ Discuss a pilot
 
 <script>
 
-function setInput(text){
- document.getElementById("input").value=text;
+/* Example input fill */
+function fill(type){
+var input=document.getElementById("input");
+
+if(type=="scope2"){
+ input.value="Market-based Scope 2 uses supplier contract emission factors";
+}
+if(type=="emissions"){
+ input.value="Total market-based Scope 1+2 emissions in 2023 were 366.683";
+}
+if(type=="waste"){
+ input.value="Waste-management approach is based on EU Waste Directive";
+}
 }
 
+/* MAIN FUNCTION */
 function run(){
 
-let text=document.getElementById("input").value.toLowerCase();
+var text=document.getElementById("input").value.toLowerCase();
 
-let verdict, units, contr, proof, improve, color;
+var verdict="";
+var units="";
+var contr="";
+var proof="";
+var improve="";
+var color="orange";
 
-/* SCOPE 2 */
-if(text.includes("scope") && text.includes("2")){
+/* Scope 2 */
+if(text.includes("scope 2")){
  verdict="Fully trusted";
  units="3";
  contr="0";
  color="green";
 
- proof="<div class='proof'><b>GHG Protocol Scope 2 Guidance</b><br>" +
- "<a href='https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidpen source</a><br>" +
- "Chapter 6.2 (pp.44–45)<br>" +
+ proof="<div class='proof'><b>GHG Protocol</b><br>" +
+ "https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdfOpen source</a><br>" +
  "Chapter 6.11.3 (pp.56–57)" +
  "</div>";
 
  improve="No internal evidence required";
 }
 
-/* EMISSIONS */
-else if(text.includes("366") || text.includes("scope 1")){
+/* Emissions */
+else if(text.includes("366")){
  verdict="Contradicted by internal report";
  units="2";
  contr="100";
  color="red";
 
- proof="<div class='proof'><b>Internal sustainability report (same document)</b><br>" +
- "ESRS E1-6 – Page 64<br>" +
- "Scope 1: 219.290<br>" +
- "Scope 2: 140.375<br>" +
- "Total ≠ 366.683" +
+ proof="<div class='proof'><b>Internal report</b><br>" +
+ "ESRS E1-6 page 64<br>" +
+ "219.290 + 140.375 ≠ 366.683" +
  "</div>";
 
- improve="Fix aggregation or correct reported number";
+ improve="Fix inconsistency";
 }
 
-/* WASTE */
+/* Waste */
 else if(text.includes("waste")){
- verdict="Directionally consistent – internal evidence required";
+ verdict="Directionally consistent";
  units="1";
  contr="0";
  color="orange";
 
- proof="<div class='proof'><b>Directive 2008/98/EC</b><br>" +
- "<a href='https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098' targetr>" +
- "Article 4 – Waste hierarchy" +
+ proof="<div class='proof'><b>EU Directive</b><br>" +
+ "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098Open source</a><br>" +
+ "Article 4 – waste hierarchy" +
  "</div>";
 
- improve="Provide internal waste policy proof";
+ improve="Provide internal policy";
 }
 
-/* DEFAULT */
+/* FALLBACK */
 else{
- verdict="No matching rule";
+ verdict="No rule found";
  units="1";
  contr="0";
  color="orange";
- proof="<div class='proof'>No structured evidence available</div>";
- improve="Define verification logic";
+
+ proof="<div class='proof'>No matching structured evidence</div>";
+ improve="Define verification rule";
 }
 
-/* RENDER */
+/* Render */
 document.getElementById("result").style.display="block";
 document.getElementById("verdict").innerText=verdict;
 document.getElementById("units").innerText=units;
@@ -251,7 +248,8 @@ document.getElementById("contr").innerText=contr+"/100";
 document.getElementById("proof").innerHTML=proof;
 document.getElementById("improve").innerText=improve;
 
-document.getElementById("tree").className="tree "+color;
+var tree=document.getElementById("tree");
+tree.className="tree "+color;
 
 }
 
