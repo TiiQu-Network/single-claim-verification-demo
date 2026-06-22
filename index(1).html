@@ -8,85 +8,63 @@
 <style>
 body{
   margin:0;
-  font-family:system-ui, Arial;
+  font-family:Arial;
   background:#f6f9fb;
 }
 
 .container{
-  max-width:1000px;
+  max-width:900px;
   margin:auto;
-  padding:50px 20px;
+  padding:40px 20px;
 }
 
-/* HERO */
 .hero{text-align:center;}
-.hero h1{
-  font-size:70px;
-  font-weight:900;
-}
-.hero p{
-  font-size:20px;
-  color:#444;
-}
+.hero h1{font-size:60px; font-weight:900;}
+.hero p{font-size:18px; color:#444}
 
 /* SEARCH */
 .search{
   display:flex;
   gap:10px;
-  margin-top:40px;
-  background:white;
-  border-radius:20px;
+  margin-top:30px;
+  background:#fff;
   padding:15px;
+  border-radius:15px;
 }
-
 textarea{
   flex:1;
   border:none;
-  outline:none;
   font-size:18px;
+  outline:none;
 }
-
 button{
-  padding:14px 20px;
+  padding:12px 20px;
   border:none;
-  border-radius:12px;
+  border-radius:10px;
   background:#034459;
   color:white;
-  font-weight:700;
   cursor:pointer;
 }
-button:active{
-  transform:scale(0.97);
-}
 
-/* EXAMPLES */
-.examples{
-  text-align:center;
-  margin-top:15px;
-}
+/* examples */
+.examples{text-align:center; margin-top:10px;}
 .examples button{
   background:white;
   color:#034459;
-  border:1px solid #cbd5e1;
+  border:1px solid #ccc;
   margin:5px;
 }
 
-/* DOCUMENT BUTTON */
-.document{
-  text-align:center;
-  margin-top:20px;
-}
-
-/* RESULT */
+/* result */
 .result{
   display:none;
-  margin-top:40px;
   background:white;
+  margin-top:30px;
   padding:20px;
   border-radius:15px;
 }
 
-/* TREE */
+/* tree */
 .tree{
   width:70px;
   height:70px;
@@ -95,196 +73,16 @@ button:active{
 .orange{fill:#f59e0b;}
 .red{fill:#ef4444;}
 
-.verdict{
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-/* PROOF */
 .proof{
   background:#111;
   color:white;
-  padding:12px;
+  padding:10px;
+  border-radius:8px;
   margin-top:10px;
-  border-radius:10px;
 }
 .proof a{color:#60a5fa;}
 
-/* IMPROVE */
 .improve{
+  margin-top:15px;
   background:#fff7ed;
-  padding:12px;
-  border-radius:10px;
-  margin-top:20px;
-}
 
-/* CTA OUTSIDE */
-.cta{
-  margin-top:50px;
-  text-align:center;
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<div class="hero">
-  <h1>V.a.a.S</h1>
-  <p>
-    Is your sustainability report supported by evidence?<br>
-    <b>Audit firms can scale verification</b>
-  </p>
-</div>
-
-<div class="search">
-  <textarea id="input" placeholder="Paste a claim..."></textarea>
-  <button id="btn" onclick="run()">Audit this claim</button>
-</div>
-
-<!-- ✅ EXAMPLES -->
-<div class="examples">
-  <button onclick="setInput('Market-based Scope 2 uses supplier contract emission factors where available under the GHG Protocol hierarchy.')">
-    Scope 2 methodology
-  </button>
-
-  <button onclick="setInput('Total market-based Scope 1+2 emissions in 2023 were 366.683.')">
-    Scope 1+2 emissions
-  </button>
-
-  <button onclick="setInput('Waste-management approach is based on the EU Waste Framework Directive hierarchy.')">
-    Waste hierarchy
-  </button>
-</div>
-
-<!-- ✅ DOCUMENT BUTTON -->
-<div class="document">
-  <button onclick="window.location.href='document-demo.htmldiv>
-
-<!-- ✅ RESULT -->
-<div id="result" class="result">
-
-<div class="verdict">
-<svg id="tree" class="tree green" viewBox="0 0 100 100">
- <circle cx="50" cy="20" r="12"/>
- <circle cx="35" cy="50" r="12"/>
- <circle cx="65" cy="50" r="12"/>
- <rect x="45" y="30" width="10" height="50"/>
-</svg>
-
-<h2 id="verdictText"></h2>
-</div>
-
-<p><b>Units analysed:</b> <span id="units"></span></p>
-<p><b>Contradiction:</b> <span id="contr"></span></p>
-
-<div id="proofs"></div>
-
-<div class="improve">
-<b>How to improve validation:</b>
-<div id="improve"></div>
-</div>
-
-</div>
-
-<!-- ✅ CTA OUTSIDE -->
-<div class="cta">
-<p><b>Scale audit by focusing only on unsupported claims</b></p>
-<button onclick="window.open('https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2')">
-Discuss a pilot
-</button>
-</div>
-
-</div>
-
-<script>
-
-// ✅ set input
-function setInput(text){
-  document.getElementById("input").value=text;
-}
-
-// ✅ main function
-function run(){
-
-const text = document.getElementById("input").value.toLowerCase();
-const btn = document.getElementById("btn");
-
-btn.innerText="Auditing...";
-btn.style.background="#64748b";
-
-// defaults
-let verdict="No matching verification rule";
-let color="orange";
-let units=1;
-let contr=0;
-let proof=`<div class="proof">No evidence found</div>`;
-let improve="Define verification logic";
-
-// ✅ rule matching
-if(text.includes("scope 2")){
-  verdict="Fully trusted";
-  color="green";
-  units=3;
-  contr=0;
-  proof=`
-  <div class="proof">
-  <b>GHG Protocol Scope 2</b><br>
-  <a href="https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf" targetr>
-  Supplier-specific emission factors allowed
-  </div>`;
-  improve="No internal evidence required";
-}
-
-else if(text.includes("366")){
-  verdict="Contradicted by internal data";
-  color="red";
-  units=2;
-  contr=100;
-  proof=`
-  <div class="proof">
-  <b>Internal report (same document)</b><br>
-  Scope1 + Scope2 ≠ reported total
-  </div>`;
-  improve="Fix calculation inconsistency";
-}
-
-else if(text.includes("waste")){
-  verdict="Directionally consistent – internal evidence required";
-  color="orange";
-  units=1;
-  contr=0;
-  proof=`
-  <div class="proof">
-  <b>EU Waste Directive</b><br>
-  <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098" target="_blankrarchy defined at Article 4
-  </div>`;
-  improve="Provide internal waste policy";
-}
-
-// ✅ render
-document.getElementById("result").style.display="block";
-document.getElementById("verdictText").innerText=verdict;
-document.getElementById("units").innerText=units;
-document.getElementById("contr").innerText=contr+"/100";
-document.getElementById("proofs").innerHTML=proof;
-document.getElementById("improve").innerText=improve;
-
-let tree=document.getElementById("tree");
-tree.classList.remove("green","orange","red");
-tree.classList.add(color);
-
-// reset button
-setTimeout(()=>{
-btn.innerText="Audit this claim";
-btn.style.background="#034459";
-},600);
-
-}
-
-</script>
-
-</body>
-</html>
