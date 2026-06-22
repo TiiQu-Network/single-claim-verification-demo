@@ -86,7 +86,7 @@ button:active{
   border-radius:15px;
 }
 
-/* TREE ICON */
+/* TREE */
 .tree{
   width:70px;
   height:70px;
@@ -98,10 +98,10 @@ button:active{
 .verdict{
   display:flex;
   align-items:center;
-  gap:15px;
+  gap:12px;
 }
 
-/* PROOFS */
+/* PROOF */
 .proof{
   background:#111;
   color:white;
@@ -109,9 +109,7 @@ button:active{
   margin-top:10px;
   border-radius:10px;
 }
-.proof a{
-  color:#60a5fa;
-}
+.proof a{color:#60a5fa;}
 
 /* IMPROVE */
 .improve{
@@ -119,6 +117,12 @@ button:active{
   padding:12px;
   border-radius:10px;
   margin-top:20px;
+}
+
+/* CTA OUTSIDE */
+.cta{
+  margin-top:50px;
+  text-align:center;
 }
 </style>
 </head>
@@ -136,28 +140,33 @@ button:active{
 </div>
 
 <div class="search">
-  <textarea id="input" placeholder="Paste a claim here..."></textarea>
+  <textarea id="input" placeholder="Paste a claim..."></textarea>
   <button id="btn" onclick="run()">Audit this claim</button>
 </div>
 
-<!-- ✅ EXAMPLE BUTTONS -->
+<!-- ✅ EXAMPLES -->
 <div class="examples">
-  <button onclick="fill(0)">Scope 2 methodology</button>
-  <button onclick="fill(1)">Scope 1+2 emissions</button>
-  <button onclick="fill(2)">Waste hierarchy</button>
-</div>
+  <button onclick="setInput('Market-based Scope 2 uses supplier contract emission factors where available under the GHG Protocol hierarchy.')">
+    Scope 2 methodology
+  </button>
 
-<!-- ✅ FULL REPORT -->
-<div class="document">
-  <button onclick="windowAudit full report →
+  <button onclick="setInput('Total market-based Scope 1+2 emissions in 2023 were 366.683.')">
+    Scope 1+2 emissions
+  </button>
+
+  <button onclick="setInput('Waste-management approach is based on the EU Waste Framework Directive hierarchy.')">
+    Waste hierarchy
   </button>
 </div>
+
+<!-- ✅ DOCUMENT BUTTON -->
+<div class="document">
+  <button onclick="window.location.href='document-demo.htmldiv>
 
 <!-- ✅ RESULT -->
 <div id="result" class="result">
 
 <div class="verdict">
-
 <svg id="tree" class="tree green" viewBox="0 0 100 100">
  <circle cx="50" cy="20" r="12"/>
  <circle cx="35" cy="50" r="12"/>
@@ -166,11 +175,10 @@ button:active{
 </svg>
 
 <h2 id="verdictText"></h2>
-
 </div>
 
 <p><b>Units analysed:</b> <span id="units"></span></p>
-<p><b>Contradiction score:</b> <span id="contr"></span></p>
+<p><b>Contradiction:</b> <span id="contr"></span></p>
 
 <div id="proofs"></div>
 
@@ -179,114 +187,94 @@ button:active{
 <div id="improve"></div>
 </div>
 
-<br>
+</div>
+
+<!-- ✅ CTA OUTSIDE -->
+<div class="cta">
+<p><b>Scale audit by focusing only on unsupported claims</b></p>
 <button onclick="window.open('https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2')">
 Discuss a pilot
 </button>
-
 </div>
 
 </div>
 
 <script>
 
-// ✅ DATASET
-const claims = [
-
-{
-text:"Market-based Scope 2 uses supplier contract emission factors where available under the GHG Protocol hierarchy.",
-verdict:"Fully trusted",
-color:"green",
-units:3,
-contr:0,
-proof:`
-<div class="proof">
-<b>GHG Protocol Scope 2 Guidance</b><br>
-<a href="https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf"e</a><br>
-Supplier-specific emission factors may be used (Chapter 6.11.3)
-</div>
-`,
-improve:"No internal evidence required"
-},
-
-{
-text:"Total market-based Scope 1+2 emissions in 2023 were 366.683.",
-verdict:"Contradicted by internal data",
-color:"red",
-units:2,
-contr:100,
-proof:`
-<div class="proof">
-<b>Internal report (same document)</b><br>
-Scope 1: 219.290 + Scope 2: 140.375 = 359.665 (not 366.683)
-</div>
-`,
-improve:"Fix calculation or reconcile reported values"
-},
-
-{
-text:"Waste-management approach is based on the EU Waste Framework Directive hierarchy.",
-verdict:"Directionally consistent – internal evidence required",
-color:"orange",
-units:1,
-contr:0,
-proof:`
-<div class="proof">
-<b>Directive 2008/98/EC – Article 4</b><br>
-<a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098ce</a><br>
-The waste hierarchy shall apply as a priority order
-</div>
-`,
-improve:"Add internal waste-management policy showing implementation"
+// ✅ set input
+function setInput(text){
+  document.getElementById("input").value=text;
 }
 
-];
-
-let current=null;
-
-// ✅ Fill example
-function fill(i){
-current=claims[i];
-document.getElementById("input").value=claims[i].text;
-}
-
-// ✅ MAIN FUNCTION
+// ✅ main function
 function run(){
 
-const text=document.getElementById("input").value.toLowerCase();
+const text = document.getElementById("input").value.toLowerCase();
+const btn = document.getElementById("btn");
 
-const btn=document.getElementById("btn");
 btn.innerText="Auditing...";
 btn.style.background="#64748b";
 
-// ✅ detect claim automatically
-if(text.includes("scope 2")) current=claims[0];
-else if(text.includes("366")) current=claims[1];
-else if(text.includes("waste")) current=claims[2];
+// defaults
+let verdict="No matching verification rule";
+let color="orange";
+let units=1;
+let contr=0;
+let proof=`<div class="proof">No evidence found</div>`;
+let improve="Define verification logic";
 
-// ✅ fallback
-if(!current){
-current={
-verdict:"No matching verification rule",
-color:"orange",
-units:1,
-contr:0,
-proof:`<div class="proof">No structured evidence available</div>`,
-improve:"Define verification rules for this claim"
-};
+// ✅ rule matching
+if(text.includes("scope 2")){
+  verdict="Fully trusted";
+  color="green";
+  units=3;
+  contr=0;
+  proof=`
+  <div class="proof">
+  <b>GHG Protocol Scope 2</b><br>
+  <a href="https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf" targetr>
+  Supplier-specific emission factors allowed
+  </div>`;
+  improve="No internal evidence required";
+}
+
+else if(text.includes("366")){
+  verdict="Contradicted by internal data";
+  color="red";
+  units=2;
+  contr=100;
+  proof=`
+  <div class="proof">
+  <b>Internal report (same document)</b><br>
+  Scope1 + Scope2 ≠ reported total
+  </div>`;
+  improve="Fix calculation inconsistency";
+}
+
+else if(text.includes("waste")){
+  verdict="Directionally consistent – internal evidence required";
+  color="orange";
+  units=1;
+  contr=0;
+  proof=`
+  <div class="proof">
+  <b>EU Waste Directive</b><br>
+  <a href="https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098" target="_blankrarchy defined at Article 4
+  </div>`;
+  improve="Provide internal waste policy";
 }
 
 // ✅ render
 document.getElementById("result").style.display="block";
-document.getElementById("verdictText").innerText=current.verdict;
-document.getElementById("units").innerText=current.units;
-document.getElementById("contr").innerText=current.contr+"/100";
-document.getElementById("proofs").innerHTML=current.proof;
-document.getElementById("improve").innerText=current.improve;
+document.getElementById("verdictText").innerText=verdict;
+document.getElementById("units").innerText=units;
+document.getElementById("contr").innerText=contr+"/100";
+document.getElementById("proofs").innerHTML=proof;
+document.getElementById("improve").innerText=improve;
 
 let tree=document.getElementById("tree");
 tree.classList.remove("green","orange","red");
-tree.classList.add(current.color);
+tree.classList.add(color);
 
 // reset button
 setTimeout(()=>{
