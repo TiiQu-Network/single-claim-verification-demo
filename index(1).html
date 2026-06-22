@@ -85,4 +85,159 @@ button{
 .improve{
   margin-top:15px;
   background:#fff7ed;
+  padding:10px;
+  border-radius:8px;
+}
 
+/* ORANGE CTA */
+.cta{
+  text-align:center;
+  margin-top:40px;
+}
+.cta button{
+  background:#f59e0b;
+  color:white;
+  font-weight:800;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="hero">
+  <h1>V.a.a.S</h1>
+  <p>Is your sustainability report supported by evidence?<br>
+  <b>Audit firms can scale verification</b></p>
+</div>
+
+<div class="search">
+  <textarea id="input" placeholder="Paste a claim..."></textarea>
+  <button id="btn" onclick="run()">Audit this claim</button>
+</div>
+
+<div class="examples">
+  <button onclick="setText('Market-based Scope 2 uses supplier contract emission factors where available.')">
+    Scope 2
+  </button>
+
+  <button onclick="setText('Total market-based Scope 1+2 emissions in 2023 were 366.683.')">
+    Emissions
+  </button>
+
+  <button onclick="setText('Waste-management approach is based on the EU Waste Framework Directive hierarchy.')">
+    Waste
+  </button>
+</div>
+
+<div id="result" class="result">
+
+<div style="display:flex;align-items:center;gap:15px;">
+
+<svg id="tree" class="tree green" viewBox="0 0 100 100">
+<circle cx="50" cy="20" r="12"/>
+<circle cx="35" cy="50" r="12"/>
+<circle cx="65" cy="50" r="12"/>
+<rect x="45" y="30" width="10" height="50"/>
+</svg>
+
+<h2 id="verdict"></h2>
+
+</div>
+
+<p><b>Units:</b> <span id="units"></span></p>
+<p><b>Contradiction:</b> <span id="contr"></span></p>
+
+<div id="proof"></div>
+
+<div class="improve">
+<b>Improve validation:</b>
+<div id="improve"></div>
+</div>
+
+</div>
+
+<!-- ✅ ORANGE CTA -->
+<div class="cta">
+  <p><b>Scale audit by focusing only on unsupported claims</b></p>
+  <button onclick="window.open('https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2')">
+    Discuss a pilot
+  </button>
+</div>
+
+</div>
+
+<script>
+
+function setText(t){
+  document.getElementById("input").value=t;
+}
+
+function run(){
+
+var text=document.getElementById("input").value.toLowerCase();
+var btn=document.getElementById("btn");
+
+btn.innerText="Auditing...";
+btn.style.background="#777";
+
+var verdict="No rule";
+var units="1";
+var contr="0";
+var proof="";
+var improve="";
+var color="orange";
+
+// ✅ LOGIC
+if(text.indexOf("scope 2") !== -1){
+  verdict="Fully trusted";
+  units="3";
+  contr="0";
+  color="green";
+  proof="<div class='proof'><b>GHG Protocol</b><br><a href='https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf' targetr>Supplier factors allowed</div>";
+  improve="No internal evidence needed";
+}
+
+else if(text.indexOf("366") !== -1){
+  verdict="Contradicted by report";
+  units="2";
+  contr="100";
+  color="red";
+  proof="<div class='proof'><b>Internal report</b><br>Numbers do not match total</div>";
+  improve="Fix data inconsistency";
+}
+
+else if(text.indexOf("waste") !== -1){
+  verdict="Partially supported";
+  units="1";
+  contr="0";
+  color="orange";
+  proof="<div class='proof'><b>EU Directive</b><br><a href='https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098' target='_ierarchy defined</div>";
+  improve="Provide internal policy proof";
+}
+
+// ✅ RENDER
+document.getElementById("result").style.display="block";
+document.getElementById("verdict").innerText=verdict;
+document.getElementById("units").innerText=units;
+document.getElementById("contr").innerText=contr+"/100";
+document.getElementById("proof").innerHTML=proof;
+document.getElementById("improve").innerText=improve;
+
+var tree=document.getElementById("tree");
+tree.classList.remove("green","orange","red");
+tree.classList.add(color);
+
+// reset button
+setTimeout(function(){
+  btn.innerText="Audit this claim";
+  btn.style.background="#034459";
+},500);
+
+}
+
+</script>
+
+</body>
+</html>
