@@ -168,19 +168,14 @@ let proof="<div class='proof'>No structured evidence</div>";
 let improve="Define verification rule";
 
 /* ✅ Scope 2 */
-if(text.includes("scope") && text.includes("2")){
- verdict="Fully trusted";
- units="3";
 
- proof =
- "<div class='proof'><b>GHG Protocol Scope 2</b><br>" +
- "<a href='https://ghgprotocol.org/sites/default/files/2023-032%20Guidance.pdfOpen source</a><br>" +
- "Chapter 6.2 (pp.44–45)<br>" +
- "Chapter 6.11.3 (pp.56–57)" +
- "</div>";
+proof =
+"<div class='proof'><b>GHG Protocol Scope 2 Guidance</b><br>" +
+"<a href='https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf' target='_blank'>Open source</a><br><br>" +
+"Chapter 6.2 (pp.44–45)<br>" +
+"Chapter 6.11.3 (pp.56–57)" +
+"</div>";
 
- improve="Optional: include internal methodology";
-}
 
 /* ✅ Emissions */
 else if(text.includes("366")){
