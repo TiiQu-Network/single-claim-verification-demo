@@ -1,202 +1,374 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>V.a.a.S</title>
-
+<meta charset="UTF-8">
+<title>V.a.a.S — Verification as a Service</title>
 <style>
-body{font-family:Arial;background:#f6f9fb;margin:0;}
-.container{max-width:900px;margin:auto;padding:50px 20px;}
+  :root{
+    --ink:#0a1f2b;
+    --teal:#034459;
+    --teal-light:#0e6e8c;
+    --bg:#f4f8fa;
+    --panel:#ffffff;
+    --line:#e2e8ec;
+    --amber:#f59e0b;
+    --good:#0d9488;
+    --bad:#dc2626;
+    --warn:#d97706;
+    --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+  }
 
-.hero{text-align:center;}
-.hero h1{font-size:70px;font-weight:900;margin:0;}
-.hero p{color:#555;font-size:18px;}
+  *{box-sizing:border-box;}
+  body{
+    font-family:'Segoe UI',Helvetica,Arial,sans-serif;
+    background:var(--bg);
+    margin:0;
+    color:var(--ink);
+  }
 
-.search{
-  display:flex;
-  gap:10px;
-  margin-top:40px;
-  background:white;
-  padding:15px;
-  border-radius:20px;
-}
-textarea{flex:1;font-size:16px;border:none;outline:none;}
+  .container{max-width:880px;margin:auto;padding:60px 24px 90px;}
 
-button{
-  padding:14px 22px;
-  border:none;
-  border-radius:16px;
-  background:#034459;
-  color:white;
-  font-weight:700;
-  cursor:pointer;
-}
+  /* HERO */
+  .hero{text-align:center;margin-bottom:10px;}
+  .hero .tag{
+    display:inline-block;
+    font-size:12px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--teal-light);
+    font-weight:700;
+    background:#e6f3f6;
+    padding:6px 14px;
+    border-radius:999px;
+    margin-bottom:18px;
+  }
+  .hero h1{
+    font-size:56px;
+    font-weight:800;
+    margin:0;
+    letter-spacing:-.02em;
+    color:var(--teal);
+  }
+  .hero p{color:#4a5b63;font-size:18px;margin-top:14px;max-width:560px;margin-left:auto;margin-right:auto;}
 
-.examples{
-  text-align:center;
-  margin-top:15px;
-}
-.examples button{
-  background:white;
-  color:#034459;
-  border:1px solid #ddd;
-  margin:5px;
-}
+  /* SEARCH */
+  .search{
+    display:flex;
+    gap:12px;
+    margin-top:36px;
+    background:var(--panel);
+    padding:14px;
+    border-radius:18px;
+    border:1px solid var(--line);
+    box-shadow:0 4px 18px rgba(3,68,89,.06);
+  }
+  textarea{
+    flex:1;
+    font-size:16px;
+    border:none;
+    outline:none;
+    resize:none;
+    min-height:48px;
+    font-family:inherit;
+    padding:8px 4px;
+    color:var(--ink);
+    background:transparent;
+  }
+  textarea::placeholder{color:#9aabb1;}
 
-.result{
-  display:none;
-  margin-top:40px;
-  background:white;
-  padding:20px;
-  border-radius:20px;
-}
+  button{
+    font-family:inherit;
+    cursor:pointer;
+    transition:transform .08s ease, box-shadow .15s ease, background .15s ease;
+  }
+  button:active{transform:scale(.97);}
 
-.card{
-  display:inline-block;
-  border:1px solid #ddd;
-  padding:10px;
-  margin:5px;
-  border-radius:10px;
-}
+  .btn-primary{
+    padding:14px 24px;
+    border:none;
+    border-radius:14px;
+    background:var(--teal);
+    color:white;
+    font-weight:700;
+    font-size:15px;
+    white-space:nowrap;
+  }
+  .btn-primary:hover{background:var(--teal-light);}
+  .btn-primary:disabled{opacity:.5;cursor:not-allowed;}
 
-.proof{
-  margin-top:15px;
-  background:#111;
-  color:white;
-  padding:15px;
-  border-radius:10px;
-}
-.proof a{color:#60a5fa;}
+  /* EXAMPLES */
+  .examples{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    margin-top:16px;
+    flex-wrap:wrap;
+  }
+  .examples .label{font-size:13px;color:#7a8a91;margin-right:4px;}
+  .chip{
+    background:white;
+    color:var(--teal);
+    border:1px solid var(--line);
+    padding:8px 16px;
+    border-radius:999px;
+    font-size:14px;
+    font-weight:600;
+  }
+  .chip:hover{border-color:var(--teal-light);background:#eff8fa;}
 
-.cta{text-align:center;margin-top:40px;}
-.cta button{background:#f59e0b;}
+  /* RESULT */
+  .result{
+    display:none;
+    margin-top:44px;
+    background:var(--panel);
+    padding:28px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    box-shadow:0 4px 18px rgba(3,68,89,.06);
+  }
+  .result.show{display:block;animation:fadeIn .25s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+  .verdict-row{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+  #verdict{font-size:24px;font-weight:800;margin:0;}
+  .verdict-pass{color:var(--good);}
+  .verdict-fail{color:var(--bad);}
+  .verdict-warn{color:var(--warn);}
+  .verdict-none{color:#8a98a0;}
+
+  .metrics{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;}
+  .card{
+    border:1px solid var(--line);
+    background:#fbfdfe;
+    padding:14px 18px;
+    border-radius:14px;
+    flex:1;
+    min-width:160px;
+  }
+  .card .k{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#7a8a91;font-weight:700;margin-bottom:4px;}
+  .card .v{font-size:20px;font-weight:800;color:var(--ink);}
+
+  .section-label{
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+    color:#7a8a91;
+    font-weight:700;
+    margin:22px 0 8px;
+  }
+
+  .proof{
+    background:#0c1b22;
+    color:#dce7ea;
+    padding:18px 20px;
+    border-radius:14px;
+    font-size:14.5px;
+    line-height:1.6;
+  }
+  .proof b{color:#fff;}
+  .proof a{color:#5ec2e8;text-decoration:none;border-bottom:1px solid rgba(94,194,232,.4);}
+  .proof a:hover{border-bottom-color:#5ec2e8;}
+  .proof .ref{color:#9fb3ba;font-family:var(--mono);font-size:13px;}
+
+  .improve-box{
+    background:#fff8ec;
+    border:1px solid #f3dfb4;
+    color:#7a4a06;
+    padding:14px 18px;
+    border-radius:14px;
+    font-size:14.5px;
+  }
+
+  /* CTA */
+  .cta{text-align:center;margin-top:48px;}
+  .cta p{color:#5a6b72;font-size:14px;margin-bottom:14px;}
+  .btn-cta{
+    background:var(--amber);
+    color:#3a2604;
+    padding:15px 28px;
+    border:none;
+    border-radius:14px;
+    font-weight:800;
+    font-size:15px;
+  }
+  .btn-cta:hover{background:#e08e0a;}
+
+  @media (max-width:600px){
+    .hero h1{font-size:40px;}
+    .search{flex-direction:column;}
+    .btn-primary{width:100%;}
+  }
 </style>
-
 </head>
 
 <body>
 
 <div class="container">
 
-<div class="hero">
-<h1>V.a.a.S</h1>
-<p>Audit sustainability claims with verifiable evidence</p>
-</div>
+  <div class="hero">
+    <span class="tag">Demo</span>
+    <h1>V.a.a.S</h1>
+    <p>Verification as a Service — audit sustainability claims against verifiable evidence, instantly.</p>
+  </div>
 
-<div class="search">
-<textarea id="input" placeholder="Paste a claim..."></textarea>
-<button onclick="run()">Audit this claim</button>
-</div>
+  <div class="search">
+    <textarea id="input" placeholder="Paste a sustainability claim to audit..."></textarea>
+    <button class="btn-primary" id="auditBtn" onclick="run()">Audit this claim</button>
+  </div>
 
-<div class="examples">
-<button onclick="fill('scope2')">Scope 2</button>
-<button onclick="fill('emissions')">Emissions</button>
-<button onclick="fill('waste')">Waste</button>
-</div>
+  <div class="examples">
+    <span class="label">Try:</span>
+    <button class="chip" onclick="fill('scope2')">Scope 2 methodology</button>
+    <button class="chip" onclick="fill('emissions')">Emissions total</button>
+    <button class="chip" onclick="fill('waste')">Waste hierarchy</button>
+  </div>
 
-<div id="result" class="result">
+  <div id="result" class="result">
 
-<h2 id="verdict"></h2>
+    <div class="verdict-row">
+      <h2 id="verdict"></h2>
+    </div>
 
-<div class="card">Units: <span id="units"></span></div>
-<div class="card">Contradiction: <span id="contr"></span></div>
+    <div class="metrics">
+      <div class="card">
+        <div class="k">Evidence units</div>
+        <div class="v" id="units"></div>
+      </div>
+      <div class="card">
+        <div class="k">Contradiction score</div>
+        <div class="v" id="contr"></div>
+      </div>
+    </div>
 
-<div id="proof"></div>
+    <div class="section-label">Supporting evidence</div>
+    <div id="proof" class="proof"></div>
 
-<p><b>Improve validation:</b></p>
-<div id="improve"></div>
+    <div class="section-label">Improve validation</div>
+    <div id="improve" class="improve-box"></div>
 
-</div>
+  </div>
 
-<div class="cta">
-<button onclick="window.open('https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2')">
-Discuss a pilot
-</button>
-</div>
+  <div class="cta">
+    <p>Want this running on your own ESG disclosures?</p>
+    <button class="btn-cta" onclick="bookPilot()">Discuss a pilot</button>
+  </div>
 
 </div>
 
 <script>
 
-/* Examples */
 function fill(type){
-
-if(type==="scope2"){
-document.getElementById("input").value="Scope 2 emissions methodology";
+  var examples = {
+    scope2: "Scope 2 emissions methodology",
+    emissions: "Total emissions 366.683",
+    waste: "Waste hierarchy approach"
+  };
+  document.getElementById("input").value = examples[type] || "";
+  document.getElementById("input").focus();
 }
 
-if(type==="emissions"){
-document.getElementById("input").value="Total emissions 366.683";
+function bookPilot(){
+  window.open(
+    'https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2',
+    '_blank'
+  );
 }
 
-if(type==="waste"){
-document.getElementById("input").value="Waste hierarchy approach";
+function setVerdictClass(el, type){
+  el.classList.remove('verdict-pass','verdict-fail','verdict-warn','verdict-none');
+  el.classList.add(type);
 }
 
-}
-
-/* MAIN */
 function run(){
 
-var text=document.getElementById("input").value.toLowerCase();
+  var raw = document.getElementById("input").value;
+  var text = raw.toLowerCase().trim();
 
-var verdict="No matching rule";
-var units="1";
-var contr="0";
-var proof="<div class='proof'>No structured evidence</div>";
-var improve="Define verification logic";
+  var verdictEl = document.getElementById("verdict");
 
-/* Scope 2 */
-if(text.indexOf("scope")!=-1 && text.indexOf("2")!=-1){
+  if(!text){
+    verdictEl.innerText = "Enter a claim to audit";
+    setVerdictClass(verdictEl, 'verdict-none');
+    document.getElementById("units").innerText = "—";
+    document.getElementById("contr").innerText = "—";
+    document.getElementById("proof").innerHTML = "No claim provided yet.";
+    document.getElementById("improve").innerText = "Paste a claim above, or try one of the examples.";
+    document.getElementById("result").classList.add("show");
+    return;
+  }
 
-verdict="✅ Fully trusted";
-units="3";
-contr="0";
+  var verdict = "No matching rule";
+  var verdictClass = "verdict-none";
+  var units = "1";
+  var contr = "0";
+  var proof = "<div>No structured evidence found for this claim in the demo dataset.</div>";
+  var improve = "Define verification logic for this claim type.";
 
-proof="<div class='proof'><b>GHG Protocol Scope 2 Guidance</b><br>" +
-"<a href='https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf' target='_</a><br><br>" +
-"Chapter 6.2 (pp.44–45)<br>" +
-"Chapter 6.11.3 (pp.56–57)</div>";
+  /* Scope 2 */
+  if(text.indexOf("scope") !== -1 && text.indexOf("2") !== -1){
 
-improve="Optional: include internal methodology confirming application";
+    verdict = "✅ Fully trusted";
+    verdictClass = "verdict-pass";
+    units = "3";
+    contr = "0";
+
+    proof =
+      "<b>GHG Protocol Scope 2 Guidance</b><br>" +
+      "<a href='https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf' target='_blank' rel='noopener'>View source document ↗</a><br><br>" +
+      "<span class='ref'>Chapter 6.2 — pp. 44–45</span><br>" +
+      "<span class='ref'>Chapter 6.11.3 — pp. 56–57</span>";
+
+    improve = "Optional: attach internal methodology document confirming application.";
+  }
+
+  /* Emissions */
+  else if(text.indexOf("366") !== -1){
+
+    verdict = "❌ Contradicted";
+    verdictClass = "verdict-fail";
+    units = "2";
+    contr = "100";
+
+    proof =
+      "<b>Internal report — ESRS E1-6</b><br>" +
+      "<span class='ref'>Page 64</span><br><br>" +
+      "Reported components do not sum to the stated total:<br>" +
+      "<span class='ref'>219.290 + 140.375 ≠ 366.683</span>";
+
+    improve = "Fix the inconsistency between component figures and the reported total.";
+  }
+
+  /* Waste */
+  else if(text.indexOf("waste") !== -1){
+
+    verdict = "⚠️ Partial alignment";
+    verdictClass = "verdict-warn";
+    units = "1";
+    contr = "0";
+
+    proof =
+      "<b>EU Directive 2008/98/EC</b><br>" +
+      "<a href='https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098' target='_blank' rel='noopener'>View source document ↗</a><br><br>" +
+      "<span class='ref'>Article 4 — Waste hierarchy</span>";
+
+    improve = "Provide internal policy documentation demonstrating implementation.";
+  }
+
+  setVerdictClass(verdictEl, verdictClass);
+  verdictEl.innerText = verdict;
+  document.getElementById("units").innerText = units;
+  document.getElementById("contr").innerText = contr + " / 100";
+  document.getElementById("proof").innerHTML = proof;
+  document.getElementById("improve").innerText = improve;
+  document.getElementById("result").classList.add("show");
 }
 
-/* Emissions */
-else if(text.indexOf("366")!=-1){
-
-verdict="❌ Contradicted";
-units="2";
-contr="100";
-
-proof="<div class='proof'><b>Internal report</b><br>" +
-"ESRS E1-6 – Page 64<br>" +
-"219.290 + 140.375 ≠ 366.683</div>";
-
-improve="Fix inconsistency in reported total";
-}
-
-/* Waste */
-else if(text.indexOf("waste")!=-1){
-
-verdict="⚠️ Partial alignment";
-units="1";
-contr="0";
-
-proof="<div class='proof'><b>EU Directive 2008/98/EC</b><br>" +
-"<a href='https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098' target='_blankbr><br>" +
-"Article 4 – Waste hierarchy</div>";
-
-improve="Provide internal policy demonstrating implementation";
-}
-
-/* RENDER */
-document.getElementById("result").style.display="block";
-document.getElementById("verdict").innerText=verdict;
-document.getElementById("units").innerText=units;
-document.getElementById("contr").innerText=contr+"/100";
-document.getElementById("proof").innerHTML=proof;
-document.getElementById("improve").innerText=improve;
-
-}
+document.getElementById("input").addEventListener("keydown", function(e){
+  if(e.key === "Enter" && (e.metaKey || e.ctrlKey)){
+    run();
+  }
+});
 
 </script>
 
