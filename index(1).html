@@ -104,7 +104,26 @@ a{color:#60a5fa;}
   <textarea id="input" placeholder="Paste a claim..."></textarea>
   <button onclick="run()">Audit</button>
 </div>
+<!-- EXAMPLE CLAIMS -->
+<div style="text-align:center; margin-top:20px;">
+  <button onclick="document.getElementById('input').value='Market-based Scope 2 uses supplier contract emission factors where available.'">
+    Scope 2 methodology
+  </button>
 
+  <button onclick="document.getElementById('input').value='Total market-based Scope 1+2 emissions in 2023 were 366.683.'">
+    Scope 1+2 emissions
+  </button>
+
+  <button onclick="document.getElementById('input').value='Waste-management approach is based on the EU Waste Framework Directive hierarchy.'">
+    Waste hierarchy
+  </button>
+</div>
+
+<!-- FULL REPORT BUTTON -->
+<div style="text-align:center; margin-top:20px;">
+  <button 
+    onclick="window.location.href='document-demo.html'" 
+    style="background:#034459; color
 <div id="result" class="result">
 
 <svg id="tree" class="tree green" viewBox="0 0 100 100">
