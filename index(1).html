@@ -11,7 +11,6 @@ body{
   font-family:Arial;
   background:#f6f9fb;
 }
-
 .container{
   max-width:900px;
   margin:auto;
@@ -61,15 +60,6 @@ button{
   margin:5px;
 }
 
-/* DOCUMENT BUTTON */
-.doc{
-  text-align:center;
-  margin-top:15px;
-}
-.doc button{
-  background:#034459;
-}
-
 /* RESULT */
 .result{
   display:none;
@@ -88,17 +78,10 @@ button{
 .orange{fill:#f59e0b;}
 .red{fill:#ef4444;}
 
-.verdict{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-/* METRIC CARDS */
 .metrics{
   display:flex;
   gap:10px;
-  margin-top:15px;
+  margin-top:10px;
 }
 .card{
   background:#f8fafc;
@@ -107,7 +90,7 @@ button{
   border:1px solid #ddd;
 }
 
-/* PROOFS */
+/* PROOF */
 .proof{
   background:#111;
   color:white;
@@ -115,17 +98,7 @@ button{
   border-radius:10px;
   margin-top:10px;
 }
-.proof a{
-  color:#60a5fa;
-}
-
-/* IMPROVE */
-.improve{
-  margin-top:15px;
-  background:#fff7ed;
-  padding:10px;
-  border-radius:8px;
-}
+.proof a{color:#60a5fa}
 
 /* CTA */
 .cta{
@@ -134,7 +107,6 @@ button{
 }
 .cta button{
   background:#f59e0b;
-  font-weight:800;
 }
 </style>
 </head>
@@ -153,25 +125,26 @@ button{
 
 <div class="search">
   <textarea id="input" placeholder="Paste a claim..."></textarea>
-  <button onclick="run()">Audit this claim</button>
+  <button id="btn" onclick="run()">Audit this claim</button>
 </div>
 
-<!-- ✅ EXAMPLES -->
+<!-- ✅ SAFE BUTTONS -->
 <div class="examples">
-  <button onclick="setText('Market-based Scope 2 uses supplier contract emission factors where available.')">Scope 2</button>
-  <button onclick="setText('Total market-based Scope 1+2 emissions in 2023 were 366.683.')">Emissions</button>
-  <button onclick="setText('Waste-management approach is based on the EU Waste Framework Directive hierarchy.')">Waste</button>
+  <button onclick="example(0)">Scope 2</button>
+  <button onclick="example(1)">Emissions</button>
+  <button onclick="example(2)">Waste</button>
 </div>
 
-<!-- ✅ FULL REPORT -->
-<div class="doc">
-  <button onclick="window.location.href='document-demo.html'>
+<div style="text-align:center; margin-top:15px;">
+  <button onclick="window.location.hrefrt audit →
+  </button>
 </div>
 
 <!-- ✅ RESULT -->
 <div id="result" class="result">
 
-<div class="verdict">
+<div style="display:flex;align-items:center;gap:10px;">
+
 <svg id="tree" class="tree green" viewBox="0 0 100 100">
 <circle cx="50" cy="20" r="12"/>
 <circle cx="35" cy="50" r="12"/>
@@ -180,23 +153,23 @@ button{
 </svg>
 
 <h2 id="verdict"></h2>
+
 </div>
 
 <div class="metrics">
-  <div class="card"><b>Units analysed</b><br><span id="units"></span></div>
-  <div class="card"><b>Contradiction score</b><br><span id="contr"></span></div>
+  <div class="card"><b>Units</b><br><span id="units"></span></div>
+  <div class="card"><b>Contradiction</b><br><span id="contr"></span></div>
 </div>
 
-<div id="proofs"></div>
+<div id="proof"></div>
 
-<div class="improve">
-<b>How to improve validation</b>
+<div style="margin-top:15px;">
+<b>Improve validation</b>
 <div id="improve"></div>
 </div>
 
 </div>
 
-<!-- ✅ CTA -->
 <div class="cta">
   <p><b>Scale audit by focusing only on unsupported claims</b></p>
   <button onclick="window.open('https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2')">
@@ -208,86 +181,78 @@ button{
 
 <script>
 
-function setText(t){
- document.getElementById("input").value=t;
+// ✅ SAFE DATA
+const data = [
+"Market-based Scope 2 uses supplier contract emission factors where available.",
+"Total market-based Scope 1+2 emissions in 2023 were 366.683.",
+"Waste-management approach is based on the EU Waste Framework Directive hierarchy."
+];
+
+// ✅ BUTTON CLICK
+function example(i){
+  document.getElementById("input").value = data[i];
 }
 
+// ✅ MAIN LOGIC
 function run(){
 
 var text=document.getElementById("input").value.toLowerCase();
+var btn=document.getElementById("btn");
 
-var verdict="";
-var units="";
-var contr="";
+btn.innerText="Auditing...";
+btn.style.background="#777";
+
+var verdict="No rule";
+var units="1";
+var contr="0";
 var proof="";
 var improve="";
-var color="green";
+var color="orange";
 
-/* ✅ CLAIM 1 */
-if(text.includes("scope 2")){
- verdict="Fully trusted";
- units="3";
- contr="0";
- color="green";
-
- proof=
- "<div class='proof'><b>GHG Protocol Scope 2 Guidance</b><br>" +
- "https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdfOpen source</a><br><br>" +
- "Chapter 6.2 (pp. 44–45)<br>" +
- "Chapter 6.11.3 (pp. 56–57)<br>" +
- "Section 1.5.1 (p.10)" +
- "</div>";
-
- improve="No internal evidence required";
+/* CLAIM 1 */
+if(text.indexOf("scope 2")!=-1){
+  verdict="Fully trusted";
+  units="3";
+  contr="0";
+  color="green";
+  proof="<div class='proof'><b>GHG Protocol Scope 2 Guidance</b><br><a href='https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdfce</a><br>Chapter 6.11.3 (pp.56–57)</div>";
+  improve="No internal evidence required";
 }
 
-/* ✅ CLAIM 2 */
-else if(text.includes("366")){
- verdict="Contradicted by internal report";
- units="2";
- contr="100";
- color="red";
-
- proof=
- "<div class='proof'><b>Internal sustainability report (same document)</b><br><br>" +
- "ESRS E1-6 – Brutto-THG-Emissionen<br>" +
- "Page 64<br>" +
- "Scope 1: 219.290<br>" +
- "Scope 2: 140.375<br>" +
- "Sum = 359.665 vs reported 366.683" +
- "</div>";
-
- improve="Correct aggregation or reconcile values";
+/* CLAIM 2 */
+else if(text.indexOf("366")!=-1){
+  verdict="Contradicted by internal report";
+  units="2";
+  contr="100";
+  color="red";
+  proof="<div class='proof'><b>Internal report</b><br>ESRS E1-6 page 64<br>219.290 + 140.375 ≠ 366.683</div>";
+  improve="Fix calculation inconsistency";
 }
 
-/* ✅ CLAIM 3 */
-else if(text.includes("waste")){
- verdict="Directionally consistent – internal evidence required";
- units="1";
- contr="0";
- color="orange";
-
- proof=
- "<div class='proof'><b>Directive 2008/98/EC – Waste Framework Directive</b><br>" +
- "<a href='https://eur-lex.europa.eu/legal-contenturi=CELEX:32008L0098Open source</a><br><br>" +
- "Article 4 — Waste hierarchy<br>" +
- "Priority order: prevention → reuse → recycling → recovery → disposal" +
- "</div>";
-
- improve="Provide internal waste policy proving implementation";
+/* CLAIM 3 */
+else if(text.indexOf("waste")!=-1){
+  verdict="Directionally consistent – internal evidence required";
+  units="1";
+  contr="0";
+  color="orange";
+  proof="<div class='proof'><b>EU Directive 2008/98/EC</b><br><a href='https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098'e</a><br>Article 4 – Waste hierarchy</div>";
+  improve="Provide internal policy evidence";
 }
 
-/* ✅ RENDER */
+// ✅ RENDER
 document.getElementById("result").style.display="block";
 document.getElementById("verdict").innerText=verdict;
 document.getElementById("units").innerText=units;
 document.getElementById("contr").innerText=contr+"/100";
-document.getElementById("proofs").innerHTML=proof;
+document.getElementById("proof").innerHTML=proof;
 document.getElementById("improve").innerText=improve;
 
 var tree=document.getElementById("tree");
 tree.classList.remove("green","orange","red");
 tree.classList.add(color);
+
+btn.innerText="Audit this claim";
+btn.style.background="#034459";
 
 }
 
