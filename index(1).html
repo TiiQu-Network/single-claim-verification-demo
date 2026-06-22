@@ -2,208 +2,186 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>V.a.a.S – Audit Verification</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body {
-  margin: 0;
+  margin:0;
   font-family: system-ui, -apple-system, Segoe UI, Arial, sans-serif;
-  background: #f6f9fb;
-  color: #0f172a;
+  background:#f6f9fb;
+  color:#0f172a;
 }
 
 .container {
-  max-width: 1200px;
-  margin: auto;
-  padding: 56px 24px 96px;
+  max-width:1200px;
+  margin:auto;
+  padding:64px 24px 96px;
 }
 
 /* HERO */
 .hero {
-  text-align: center;
+  text-align:center;
 }
-
 .hero h1 {
-  font-size: 72px;
-  margin: 0;
-  letter-spacing: .08em;
+  font-size:72px;
+  font-weight:900;
+  letter-spacing:.08em;
+  margin:0;
 }
-
 .hero p {
-  margin-top: 12px;
-  font-size: 22px;
-  color: #475569;
+  margin-top:14px;
+  font-size:24px;
+  font-weight:600;
+  color:#475569;
 }
 
 /* SEARCH */
 .search {
-  margin: 64px auto 0;
-  max-width: 960px;
-  background: white;
-  border-radius: 28px;
-  border: 1px solid #cbd5e1;
-  box-shadow: 0 24px 60px rgba(15,23,42,.1);
-  padding: 18px;
-  display: flex;
-  gap: 16px;
+  margin:64px auto 0;
+  max-width:960px;
+  background:white;
+  border-radius:28px;
+  border:1px solid #cbd5e1;
+  box-shadow:0 24px 60px rgba(15,23,42,.1);
+  padding:18px;
+  display:flex;
+  gap:16px;
 }
-
 textarea {
-  flex: 1;
-  border: none;
-  font-size: 20px;
-  padding: 14px;
-  resize: none;
-  outline: none;
+  flex:1;
+  border:none;
+  font-size:20px;
+  padding:14px;
+  resize:none;
+  outline:none;
 }
-
 button {
-  background: #034459;
-  color: white;
-  border: none;
-  border-radius: 18px;
-  padding: 18px 30px;
-  font-weight: 800;
-  cursor: pointer;
+  background:#034459;
+  color:white;
+  border:none;
+  border-radius:18px;
+  padding:18px 32px;
+  font-weight:800;
+  cursor:pointer;
 }
-
-button:hover { opacity: .9; }
+button.loading {
+  background:#64748b;
+}
 
 /* EXAMPLES */
 .examples {
-  margin-top: 22px;
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  flex-wrap: wrap;
+  margin-top:22px;
+  display:flex;
+  gap:12px;
+  justify-content:center;
+  flex-wrap:wrap;
 }
-
 .examples button {
-  background: white;
-  color: #034459;
-  border: 1px solid #cbd5e1;
-  font-size: 14px;
-  padding: 10px 16px;
+  background:white;
+  color:#034459;
+  border:1px solid #cbd5e1;
+  font-size:14px;
+  padding:10px 16px;
 }
 
 /* ACTIONS */
 .actions {
-  margin-top: 28px;
-  display: flex;
-  justify-content: center;
-  gap: 18px;
-  flex-wrap: wrap;
+  margin-top:28px;
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  flex-wrap:wrap;
 }
-
 .secondary {
-  background: white;
-  color: #034459;
-  border: 1px solid #cbd5e1;
+  background:white;
+  color:#034459;
+  border:1px solid #cbd5e1;
 }
 
 /* RESULT */
 .result {
-  margin-top: 72px;
-  background: white;
-  border-radius: 32px;
-  border: 1px solid #e2e8f0;
-  padding: 40px;
-  display: none;
+  margin-top:72px;
+  background:white;
+  border-radius:32px;
+  border:1px solid #e2e8f0;
+  padding:40px;
+  display:none;
 }
 
 /* VERDICT */
 .verdict {
-  display: flex;
-  gap: 28px;
-  align-items: center;
+  display:flex;
+  gap:28px;
+  align-items:center;
 }
-
 .tree {
-  width: 120px;
-  height: 120px;
-  border-radius: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 900;
-  color: white;
-  letter-spacing: .08em;
+  width:120px;
+  height:120px;
 }
-
-.green { background: #16a34a; }
-.orange { background: #f59e0b; }
-.red { background: #ef4444; }
+.tree.green { filter: hue-rotate(90deg) saturate(1.4); }
+.tree.orange { filter: hue-rotate(30deg) saturate(1.4); }
+.tree.red { filter: hue-rotate(-20deg) saturate(1.4); }
 
 .verdict-text {
-  font-size: 30px;
-  font-weight: 900;
+  font-size:30px;
+  font-weight:900;
 }
 
 /* METRICS */
 .metrics {
-  margin-top: 32px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  margin-top:32px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:20px;
 }
-
 .metric {
-  background: #f8fafc;
-  border-radius: 18px;
-  padding: 22px;
-  border: 1px solid #e2e8f0;
+  background:#f8fafc;
+  border-radius:18px;
+  padding:22px;
+  border:1px solid #e2e8f0;
 }
-
 .metric span {
-  font-size: 13px;
-  color: #64748b;
-  font-weight: 700;
+  font-size:13px;
+  color:#64748b;
+  font-weight:700;
 }
-
 .metric strong {
-  display: block;
-  margin-top: 8px;
-  font-size: 32px;
+  display:block;
+  margin-top:8px;
+  font-size:32px;
 }
 
 /* PROOFS */
-.section {
-  margin-top: 40px;
-}
-
+.section { margin-top:40px; }
 .proof {
-  margin-top: 16px;
-  padding: 18px;
-  background: #0f172a;
-  color: #e5e7eb;
-  border-radius: 16px;
-  font-size: 14px;
+  margin-top:16px;
+  padding:18px;
+  background:#0f172a;
+  color:#e5e7eb;
+  border-radius:16px;
+  font-size:14px;
 }
+.proof a { color:#93c5fd; text-decoration:none; }
 
-.proof a {
-  color: #93c5fd;
-  text-decoration: none;
-}
-
-/* IMPROVEMENT */
+/* IMPROVE */
 .improve {
-  margin-top: 28px;
-  background: #fff7ed;
-  border: 1px solid #fed7aa;
-  padding: 22px;
-  border-radius: 20px;
-  color: #7c2d12;
+  margin-top:28px;
+  background:#fff7ed;
+  border:1px solid #fed7aa;
+  padding:22px;
+  border-radius:20px;
+  color:#7c2d12;
 }
 
 /* FOOTER CTA */
 .footer-cta {
-  margin-top: 48px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
+  margin-top:48px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:20px;
 }
 </style>
 </head>
@@ -213,12 +191,16 @@ button:hover { opacity: .9; }
 
 <div class="hero">
   <h1>V.a.a.S</h1>
-  <p>Audit‑grade verification of report claims.</p>
+  <p>
+    Is your sustainability report supported by evidence?<br>
+    <strong>How audit firms can scale sustainability verification</strong>
+  </p>
 </div>
 
 <div class="search">
-  <textarea id="claimBox" rows="2" placeholder="Paste a claim from a report…"></textarea>
-  <button onclick="verify()">Audit this claim</button>
+  <textarea id="claimBox" rows="2"
+    placeholder="Paste a claim from a sustainability report…"></textarea>
+  <button id="auditBtn" onclick="verify()">Audit this claim</button>
 </div>
 
 <div class="examples">
@@ -229,17 +211,14 @@ button:hover { opacity: .9; }
 
 <div class="actions">
   <button class="secondary" onclick="toggleExplain()">What is deterministic verification?</button>
-  document-demo.htmlAudit full report</button>
-</div>
-
-<div id="explain" class="improve" style="display:none;">
+  <button class="secondary" onclick="window.location.hrefiv id="explain" class="improve" style="display:none;">
 Deterministic verification means the same claim is always checked against the same explicit sources and rules,
 with traceable evidence and no probabilistic interpretation.
 </div>
 
 <div id="result" class="result">
   <div class="verdict">
-    <div id="tree" class="tree orange">AUDIT</div>
+    <img id="tree" src="tree.svg" class="tree orange" alt="verification status"/>
     <div class="verdict-text" id="verdictText"></div>
   </div>
 
@@ -262,7 +241,7 @@ with traceable evidence and no probabilistic interpretation.
   <div class="footer-cta">
     <div>
       <strong>Scale audit by design</strong><br>
-      Audit firms use this approach to focus effort only on unsupported claims.
+      Focus audit effort only on unsupported claims.
     </div>
     <button onclick="window.open('https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2','_blank')">
       Discuss a pilot
@@ -294,11 +273,11 @@ const claims = [
  units:2,
  contradiction:100,
  proofs:[{
-  title:"ESRS E1‑6 – Brutto‑THG‑Emissionen (internal report)",
+  title:"Internal sustainability report (same document under review)",
   url:"#",
-  quote:"Scope 1: 219.290; Market‑based Scope 2: 140.375. Sum = 359.665, not 366.683."
+  quote:"Scope 1: 219.290; Market‑based Scope 2: 140.375. Combined total reported as 366.683."
  }],
- internal:["Reconcile calculation or correct reported total."]
+ internal:["Reconcile calculation or correct reported total in the report."]
 },
 {
  text:"Waste‑management approach is based on the EU Waste Framework Directive hierarchy.",
@@ -311,7 +290,7 @@ const claims = [
   url:"https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098",
   quote:"The waste hierarchy shall apply as a priority order in waste prevention and management."
  }],
- internal:["Internal waste‑management policy or procedures demonstrating application of the hierarchy."]
+ internal:["Internal waste‑management policy demonstrating application of the hierarchy."]
 }
 ];
 
@@ -324,21 +303,26 @@ function load(i){
 
 function verify(){
  if(!current) return;
- document.getElementById("result").style.display="block";
- document.getElementById("verdictText").innerText=current.verdict;
- document.getElementById("units").innerText=current.units;
- document.getElementById("contradiction").innerText=current.contradiction+"/100";
- document.getElementById("tree").className="tree "+current.color;
+ const btn=document.getElementById("auditBtn");
+ btn.classList.add("loading");
+ btn.textContent="Auditing…";
 
- document.getElementById("proofs").innerHTML=current.proofs.map(p=>`
-  <div class="proof">
-    <strong>${p.title}</strong><br>
-    ${p.url}${p.url}</a><br>
-    “${p.quote}”
-  </div>
- `).join("");
+ setTimeout(()=>{
+  document.getElementById("result").style.display="block";
+  document.getElementById("verdictText").innerText=current.verdict;
+  document.getElementById("units").innerText=current.units;
+  document.getElementById("contradiction").innerText=current.contradiction+"/100";
+  const tree=document.getElementById("tree");
+  tree.className="tree "+current.color;
 
- document.getElementById("internal").innerHTML=current.internal.map(i=>"• "+i+"<br>").join("");
+  document.getElementById("proofs").innerHTML=current.proofs.map(p=>`
+    <div class="proof">
+      <strong>${p.title}</strong><br>
+      <a hrefument.getElementById("internal").innerHTML=current.internal.map(i=>"• "+i+"<br>").join("");
+
+  btn.classList.remove("loading");
+  btn.textContent="Audit this claim";
+ },700);
 }
 
 function toggleExplain(){
