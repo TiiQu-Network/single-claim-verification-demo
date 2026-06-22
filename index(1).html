@@ -113,11 +113,9 @@ Is your sustainability report supported by evidence?<br>
 <button onclick="fill('waste')">Waste</button>
 </div>
 
+<!-- FIXED BUTTON -->
 <div style="text-align:center;margin-top:15px;">
-document-demo.html
-Test full report audit →
-</button>
-</div>
+<button onclick="window.location.href='document-demo.html'v>
 
 <div id="result" class="result">
 
@@ -157,7 +155,7 @@ Discuss a pilot
 
 <script>
 
-/* Example input fill */
+/* Example input */
 function fill(type){
 var input=document.getElementById("input");
 
@@ -168,7 +166,7 @@ if(type=="emissions"){
  input.value="Total market-based Scope 1+2 emissions in 2023 were 366.683";
 }
 if(type=="waste"){
- input.value="Waste-management approach is based on EU Waste Directive";
+ input.value="Waste-management approach is based on the EU Waste Framework Directive hierarchy";
 }
 }
 
@@ -177,70 +175,73 @@ function run(){
 
 var text=document.getElementById("input").value.toLowerCase();
 
-var verdict="";
-var units="";
-var contr="";
-var proof="";
-var improve="";
+/* DEFAULT */
+var verdict="No matching rule";
+var units="1";
+var contr="0";
 var color="orange";
+var proof="<div class='proof'>No structured evidence found</div>";
+var improve="Define verification rule";
 
-/* Scope 2 */
-if(text.includes("scope 2")){
+/* ✅ SCOPE 2 */
+if(text.indexOf("scope")>-1 && text.indexOf("2")>-1){
+
  verdict="Fully trusted";
  units="3";
  contr="0";
  color="green";
 
- proof="<div class='proof'><b>GHG Protocol</b><br>" +
- "https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdfOpen source</a><br>" +
- "Chapter 6.11.3 (pp.56–57)" +
+ proof =
+ "<div class='proof'><b>GHG Protocol Scope 2 Guidance</b><br>" +
+ "<a href='https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20pdfOpen source</a><br><br>" +
+ "Chapter 6.2 (pp.44–45): market-based method framework<br>" +
+ "Chapter 6.11.3 (pp.56–57): supplier-specific emission factors<br>" +
+ "Section 1.5.1 (p.10): hierarchy of emission factors" +
  "</div>";
 
- improve="No internal evidence required";
+ improve="Optional: add internal methodology disclosure to confirm application";
 }
 
-/* Emissions */
-else if(text.includes("366")){
+/* ✅ EMISSIONS */
+else if(text.indexOf("366")>-1){
+
  verdict="Contradicted by internal report";
  units="2";
  contr="100";
  color="red";
 
- proof="<div class='proof'><b>Internal report</b><br>" +
- "ESRS E1-6 page 64<br>" +
- "219.290 + 140.375 ≠ 366.683" +
+ proof =
+ "<div class='proof'><b>Internal sustainability report (same document)</b><br><br>" +
+ "ESRS E1-6 – Brutto-THG-Emissionen<br>" +
+ "Page 64<br><br>" +
+ "Scope 1: 219.290<br>" +
+ "Scope 2: 140.375<br>" +
+ "Sum = 359.665<br>" +
+ "Reported = 366.683 → mismatch" +
  "</div>";
 
- improve="Fix inconsistency";
+ improve="Reconcile calculation or correct reported figure in report";
 }
 
-/* Waste */
-else if(text.includes("waste")){
- verdict="Directionally consistent";
+/* ✅ WASTE */
+else if(text.indexOf("waste")>-1){
+
+ verdict="Directionally consistent – internal evidence required";
  units="1";
  contr="0";
  color="orange";
 
- proof="<div class='proof'><b>EU Directive</b><br>" +
- "https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098Open source</a><br>" +
- "Article 4 – waste hierarchy" +
+ proof =
+ "<div class='proof'><b>Directive 2008/98/EC – Waste Framework Directive</b><br>" +
+ "<a href='https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098ce</a><br><br>" +
+ "Article 4 – Waste hierarchy<br>" +
+ "Priority order: prevention → reuse → recycling → recovery → disposal" +
  "</div>";
 
- improve="Provide internal policy";
+ improve="Add internal waste management policy showing implementation of hierarchy";
 }
 
-/* FALLBACK */
-else{
- verdict="No rule found";
- units="1";
- contr="0";
- color="orange";
-
- proof="<div class='proof'>No matching structured evidence</div>";
- improve="Define verification rule";
-}
-
-/* Render */
+/* RENDER */
 document.getElementById("result").style.display="block";
 document.getElementById("verdict").innerText=verdict;
 document.getElementById("units").innerText=units;
@@ -248,8 +249,7 @@ document.getElementById("contr").innerText=contr+"/100";
 document.getElementById("proof").innerHTML=proof;
 document.getElementById("improve").innerText=improve;
 
-var tree=document.getElementById("tree");
-tree.className="tree "+color;
+document.getElementById("tree").className="tree "+color;
 
 }
 
