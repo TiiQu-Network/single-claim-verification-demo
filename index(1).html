@@ -173,3 +173,179 @@ button:hover { opacity: .9; }
 }
 
 .proof {
+  margin-top: 16px;
+  padding: 18px;
+  background: #0f172a;
+  color: #e5e7eb;
+  border-radius: 16px;
+  font-size: 14px;
+}
+
+.proof a {
+  color: #93c5fd;
+  text-decoration: none;
+}
+
+/* IMPROVEMENT */
+.improve {
+  margin-top: 28px;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  padding: 22px;
+  border-radius: 20px;
+  color: #7c2d12;
+}
+
+/* FOOTER CTA */
+.footer-cta {
+  margin-top: 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<div class="hero">
+  <h1>V.a.a.S</h1>
+  <p>Audit‑grade verification of report claims.</p>
+</div>
+
+<div class="search">
+  <textarea id="claimBox" rows="2" placeholder="Paste a claim from a report…"></textarea>
+  <button onclick="verify()">Audit this claim</button>
+</div>
+
+<div class="examples">
+  <button onclick="load(0)">Market‑based Scope 2 methodology</button>
+  <button onclick="load(1)">Scope 1+2 emissions total</button>
+  <button onclick="load(2)">Waste hierarchy compliance</button>
+</div>
+
+<div class="actions">
+  <button class="secondary" onclick="toggleExplain()">What is deterministic verification?</button>
+  document-demo.htmlAudit full report</button>
+</div>
+
+<div id="explain" class="improve" style="display:none;">
+Deterministic verification means the same claim is always checked against the same explicit sources and rules,
+with traceable evidence and no probabilistic interpretation.
+</div>
+
+<div id="result" class="result">
+  <div class="verdict">
+    <div id="tree" class="tree orange">AUDIT</div>
+    <div class="verdict-text" id="verdictText"></div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric"><span>Units analysed</span><strong id="units"></strong></div>
+    <div class="metric"><span>Contradiction score</span><strong id="contradiction"></strong></div>
+  </div>
+
+  <div class="section">
+    <strong>Verification proofs</strong>
+    <div id="proofs"></div>
+  </div>
+
+  <div class="improve">
+    <strong>How to improve validation</strong><br>
+    Add internal evidence such as:
+    <div id="internal"></div>
+  </div>
+
+  <div class="footer-cta">
+    <div>
+      <strong>Scale audit by design</strong><br>
+      Audit firms use this approach to focus effort only on unsupported claims.
+    </div>
+    <button onclick="window.open('https://outlook.office.com/bookwithme/user/466894027f1f4dfc930519865f644c3a@tiiqunetwork.onmicrosoft.com/meetingtype/vBAwqD3-ZUed0szQcaApaA2','_blank')">
+      Discuss a pilot
+    </button>
+  </div>
+</div>
+
+</div>
+
+<script>
+const claims = [
+{
+ text:"Market‑based Scope 2 uses supplier contract emission factors where available under the GHG Protocol hierarchy.",
+ verdict:"Fully trusted",
+ color:"green",
+ units:3,
+ contradiction:0,
+ proofs:[{
+  title:"GHG Protocol Scope 2 Guidance",
+  url:"https://ghgprotocol.org/sites/default/files/2023-03/Scope%202%20Guidance.pdf",
+  quote:"Supplier‑specific emission factors may be used for market‑based Scope 2 where contractual instruments meet the Scope 2 Quality Criteria (Chapter 6.11.3, pp. 56–57)."
+ }],
+ internal:["No internal evidence required to validate the rule itself."]
+},
+{
+ text:"Total market‑based Scope 1+2 emissions in 2023 were 366.683.",
+ verdict:"Contradicted by internal data",
+ color:"red",
+ units:2,
+ contradiction:100,
+ proofs:[{
+  title:"ESRS E1‑6 – Brutto‑THG‑Emissionen (internal report)",
+  url:"#",
+  quote:"Scope 1: 219.290; Market‑based Scope 2: 140.375. Sum = 359.665, not 366.683."
+ }],
+ internal:["Reconcile calculation or correct reported total."]
+},
+{
+ text:"Waste‑management approach is based on the EU Waste Framework Directive hierarchy.",
+ verdict:"Directionally consistent – internal evidence required",
+ color:"orange",
+ units:1,
+ contradiction:0,
+ proofs:[{
+  title:"Directive 2008/98/EC – Article 4",
+  url:"https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32008L0098",
+  quote:"The waste hierarchy shall apply as a priority order in waste prevention and management."
+ }],
+ internal:["Internal waste‑management policy or procedures demonstrating application of the hierarchy."]
+}
+];
+
+let current=null;
+
+function load(i){
+ current=claims[i];
+ document.getElementById("claimBox").value=current.text;
+}
+
+function verify(){
+ if(!current) return;
+ document.getElementById("result").style.display="block";
+ document.getElementById("verdictText").innerText=current.verdict;
+ document.getElementById("units").innerText=current.units;
+ document.getElementById("contradiction").innerText=current.contradiction+"/100";
+ document.getElementById("tree").className="tree "+current.color;
+
+ document.getElementById("proofs").innerHTML=current.proofs.map(p=>`
+  <div class="proof">
+    <strong>${p.title}</strong><br>
+    ${p.url}${p.url}</a><br>
+    “${p.quote}”
+  </div>
+ `).join("");
+
+ document.getElementById("internal").innerHTML=current.internal.map(i=>"• "+i+"<br>").join("");
+}
+
+function toggleExplain(){
+ const e=document.getElementById("explain");
+ e.style.display=e.style.display==="none"?"block":"none";
+}
+</script>
+
+</body>
+</html>
